@@ -1,0 +1,33 @@
+---
+// Фото из данных направления: две ширины (srcSmall ≈1000 px и src ≈2000 px) через srcset,
+// точка фокуса — через object-position. Размеры обязательны: без них страница прыгает при загрузке.
+import type { Photo } from '../../lib/types';
+
+interface Props {
+  photo: Photo;
+  /** подсказка браузеру, какой ширины кадр на экране */
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+  /** декоративный кадр (подпись есть рядом текстом) — alt пустой */
+  decorative?: boolean;
+}
+
+const { photo, sizes = '100vw', eager = false, class: className, decorative = false } = Astro.props;
+const smallW = photo.srcSmall ? Math.round(photo.width / 2) : 0;
+const srcset = photo.srcSmall ? `${photo.srcSmall} ${smallW}w, ${photo.src} ${photo.width}w` : undefined;
+---
+
+<img
+  class={className}
+  src={photo.src}
+  srcset={srcset}
+  sizes={srcset ? sizes : undefined}
+  alt={decorative ? '' : photo.alt}
+  width={photo.width}
+  height={photo.height}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : undefined}
+  decoding="async"
+  style={photo.focus ? `object-position:${photo.focus}` : undefined}
+/>

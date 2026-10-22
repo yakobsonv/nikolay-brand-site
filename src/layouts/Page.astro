@@ -1,0 +1,27 @@
+---
+// Страница визитки: общий каркас Base + своя шапка и подвал.
+import Base from './Base.astro';
+import Header from '../components/brand/Header.astro';
+import Footer from '../components/brand/Footer.astro';
+import '../styles/brand.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** путь страницы без слэшей по краям: '' — главная, 'materialy/kirpich' — направление */
+  slug?: string;
+  ogImage?: string;
+  jsonLd?: (Record<string, unknown> | null | undefined)[];
+  /** slug текущего направления — подсветить в меню */
+  current?: string;
+  onHome?: boolean;
+}
+
+const { title, description, slug = '', ogImage, jsonLd = [], current, onHome = false } = Astro.props;
+---
+
+<Base site="brand" title={title} description={description} slug={slug} ogImage={ogImage} jsonLd={jsonLd}>
+  <Header slot="header" current={current} onHome={onHome} />
+  <slot />
+  <Footer slot="footer" />
+</Base>

@@ -1,0 +1,32 @@
+---
+// Согласие на обработку персональных данных. Оператор — ООО «Кирпичный трест»; текст — дословно из опубликованного документа
+// самого клиента (src/data/legal.ts), подставляется только адрес сайта.
+// Ссылка на документ стоит в подвале и в баннере о куки.
+import Page from '../layouts/Page.astro';
+import LegalDoc from '../components/content/LegalDoc.astro';
+import { CONSENT_BLOCKS, fillLegal } from '../data/legal';
+import { PREVIEW_ORIGIN } from '../lib/sites';
+
+// ⚠️ Когда появится домен — подставлять liveUrl('brand'), а не адрес превью.
+const blocks = fillLegal(CONSENT_BLOCKS, PREVIEW_ORIGIN);
+---
+
+<Page
+  title="Согласие на обработку персональных данных — Кирпичный трест"
+  description="Согласие на обработку персональных данных ООО «Кирпичный трест»: какие данные, для чего и как долго обрабатываются, как отозвать согласие."
+  slug="consent"
+>
+  <nav class="container legal-crumbs" aria-label="Хлебные крошки">
+    <a href="/">Главная</a> <span aria-hidden="true">/</span> <span aria-current="page">Согласие на обработку персональных данных</span>
+  </nav>
+  <LegalDoc blocks={blocks} />
+</Page>
+
+<style>
+  .legal-crumbs {
+    padding-top: var(--space-5);
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .legal-crumbs a { color: var(--color-text-soft); }
+</style>

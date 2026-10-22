@@ -1,0 +1,62 @@
+[
+  {
+    "file": "/assets/logos/recke-block.svg",
+    "role": "producer-logo",
+    "producer": "RECKE BLOCK",
+    "source": "client",
+    "origin": "https://disk.yandex.ru/d/FajC0rZhBbCbAQ — /Логотип/recke-block-logo.ai (Illustrator 24.1, PDF-совместимый; sha256 6926e0fe…cfcd совпал с публичным API Диска)",
+    "downloaded": "2026-10-19",
+    "license": "материалы клиента",
+    "original_size": [665, 254],
+    "processing": "вектор: страница PDF → SVG (PyMuPDF get_svg_image), viewBox обрезан по рисунку (78 72 492 134), служебные слои и clipPath убраны; цвета исходные",
+    "seen": "надпись RECKE чёрным, под ней BLOCK вразрядку, справа красный квадрат с белым листом; фон прозрачный, чужих надписей нет"
+  },
+  {
+    "file": "/assets/logos/stellard.webp",
+    "role": "producer-logo",
+    "producer": "Стеллард",
+    "source": "client",
+    "origin": "https://m-files.cdn1.cc/lpfile/b/1/b/b1b4dee9d8e9574354c2aa85d61ed60d/-/resize/1920/f.png — картинка «завод Стеллард» с сайта тротуарная-плитка-стеллард.рф (адрес файла взят из копии главной в Web Archive от 19.04.2026: сам сайт из нашей сети не открывался; файл скачан с CDN сайта, сайт не трогали)",
+    "downloaded": "2026-10-19",
+    "license": "материалы клиента (сайт завода Стеллард, сайт компании Николая)",
+    "original_size": [1566, 490],
+    "processing": "светло-серый фон #f7f7f7 переведён в прозрачность (color-to-alpha), обрезаны поля, уменьшено до 520 px по ширине, webp без потерь",
+    "seen": "жёлто-оранжевая звезда со знаком ®, справа серым STELLARD и ART&STONE; фон прозрачный"
+  },
+  {
+    "file": "/assets/logos/perel.png",
+    "role": "producer-logo",
+    "producer": "Perel",
+    "source": "manufacturer",
+    "origin": "https://td-perel.ru/perel-logo.png (логотип в шапке официального сайта ТД Perel)",
+    "downloaded": "2026-10-19",
+    "license": "товарный знак производителя, используется для обозначения поставляемой продукции",
+    "original_size": [150, 120],
+    "processing": "обрезаны пустые прозрачные поля (147×105); крупнее и в векторе на сайте нет",
+    "seen": "синяя крыша с трубой, красная надпись PEREL, под ней синяя плашка WORK HONESTLY (часть знака), ®; фон прозрачный"
+  },
+  {
+    "file": "/assets/logos/osnovit.png",
+    "role": "producer-logo",
+    "producer": "Основит",
+    "source": "manufacturer",
+    "origin": "https://osnovit.ru/local/templates/osnovit/images/logo.png (логотип в шапке официального сайта Основит)",
+    "downloaded": "2026-10-19",
+    "license": "товарный знак производителя, используется для обозначения поставляемой продукции",
+    "original_size": [261, 121],
+    "processing": "оставлена плашка со словом ОСНОВИТ, слоган «Строй основательно!» под ней отрезан (на 48–64 px высоты он не читается); 263×98. SVG на сайте только с пустой плашкой (favicon_svg.svg) — не подходит",
+    "seen": "зелёная плашка-«крыша», белыми буквами ОСНОВИТ; фон прозрачный"
+  },
+  {
+    "file": "/assets/logos/dauer.webp",
+    "role": "producer-logo",
+    "producer": "Dauer",
+    "source": "manufacturer",
+    "origin": "https://dauer.ru/upload/medialibrary/e12/Logo_BLACK_DAUER%20(без%20фона).png — логотип в шапке официального сайта Dauer; скачан из Web Archive (снимок 22.04.2026, https://web.archive.org/web/20260422085835id_/…): dauer.ru из нашей сети не открывался",
+    "downloaded": "2026-10-19",
+    "license": "товарный знак производителя, используется для обозначения поставляемой продукции",
+    "original_size": [853, 385],
+    "processing": "оставлено слово Daüer с ®, слоган «Время создавать!» под ним отрезан (на 48–64 px высоты не читается); уменьшено до 560 px, webp без потерь",
+    "seen": "чёрное слово Daüer с двумя точками над u и знаком ®; фон прозрачный"
+  }
+]

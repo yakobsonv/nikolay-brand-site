@@ -1,0 +1,480 @@
+---
+// Шапка визитки: знак, меню с раскрывающимися списками «Материалы» (10) и «Услуги» (4),
+// телефон. На узком экране всё уезжает в панель под бургер.
+// Формы заявки нет: приём заявок пока не реализуем — связь по телефону и в шоу-руме.
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { MATERIALS, SERVICES, directionPath } from '../../data/directions';
+import { getSite } from '../../lib/sites';
+
+interface Props {
+  /** slug текущего направления — подсветить в меню */
+  current?: string;
+  /** на главной якоря без адреса */
+  onHome?: boolean;
+}
+
+const { current, onHome = false } = Astro.props;
+const site = getSite('brand');
+const home = onHome ? '' : '/';
+
+const groups = [
+  { id: 'materials', label: 'Материалы', items: MATERIALS },
+  { id: 'services', label: 'Услуги', items: SERVICES },
+];
+const links = [
+  { label: 'Производители', href: `${home}#producers` },
+  { label: 'Для кого', href: `${home}#clients` },
+  { label: 'Контакты', href: '/kontakty/' },
+];
+---
+
+<header class="hdr" data-hdr>
+  <div class="container hdr__inner">
+    <a class="hdr__logo" href="/" aria-label={`${site.brand} — на главную`}>
+      <Logo />
+    </a>
+
+    <button class="hdr__burger" type="button" data-hdr-toggle aria-expanded="false" aria-controls="hdr-panel">
+      <span class="vh">Меню</span>
+      <Icon name="menu" class="hdr__burger-open" />
+      <Icon name="close" class="hdr__burger-close" />
+    </button>
+
+    <div class="hdr__panel" id="hdr-panel" data-hdr-panel>
+      <nav class="hdr__nav" aria-label="Основное меню">
+        <ul class="hdr__list">
+          {groups.map((g) => (
+            <li class="hdr__item hdr__item--drop" data-drop>
+              <button class="hdr__link hdr__link--drop" type="button" aria-expanded="false" aria-controls={`drop-${g.id}`} data-drop-btn>
+                {g.label}
+                <Icon name="chevron" size={16} class="hdr__chev" />
+              </button>
+              <div class:list={['hdr__drop', `hdr__drop--${g.id}`]} id={`drop-${g.id}`} data-drop-panel>
+                <ul class="hdr__drop-list">
+                  {g.items.map((d) => (
+                    <li>
+                      <a
+                        class="hdr__drop-link"
+                        href={directionPath(d)}
+                        aria-current={current === d.slug ? 'page' : undefined}
+                      >
+                        <span class="hdr__drop-thumb" aria-hidden="true">
+                          <img src={d.hero.srcSmall ?? d.hero.src} alt="" width="56" height="42" loading="lazy" decoding="async" />
+                        </span>
+                        <span class="hdr__drop-text">
+                          <span class="hdr__drop-name">{d.name}</span>
+                          <span class="hdr__drop-tag">{d.tagline}</span>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+          {links.map((l) => (
+            <li class="hdr__item"><a class="hdr__link" href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <a class="hdr__phone" href={site.phone.href}>
+        <span class="hdr__phone-icon"><Icon name="phone" size={18} /></span>
+        <span class="hdr__phone-text">
+          <span class="hdr__phone-num">{site.phone.display}</span>
+          <span class="hdr__phone-hours">{site.hours}</span>
+        </span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const hdr = document.querySelector<HTMLElement>('[data-hdr]');
+  if (hdr) {
+    const toggle = hdr.querySelector<HTMLButtonElement>('[data-hdr-toggle]');
+    const drops = [...hdr.querySelectorAll<HTMLElement>('[data-drop]')];
+
+    const closeDrops = (except?: HTMLElement) => {
+      drops.forEach((d) => {
+        if (d === except) return;
+        d.classList.remove('is-open');
+        d.querySelector('[data-drop-btn]')?.setAttribute('aria-expanded', 'false');
+      });
+    };
+
+    drops.forEach((d) => {
+      const btn = d.querySelector<HTMLButtonElement>('[data-drop-btn]');
+      btn?.addEventListener('click', () => {
+        const open = !d.classList.contains('is-open');
+        closeDrops(d);
+        d.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', String(open));
+      });
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!hdr.contains(e.target as Node)) closeDrops();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      closeDrops();
+      if (hdr.classList.contains('is-menu')) {
+        hdr.classList.remove('is-menu');
+        document.documentElement.classList.remove('is-locked');
+        toggle?.setAttribute('aria-expanded', 'false');
+        toggle?.focus();
+      }
+    });
+
+    toggle?.addEventListener('click', () => {
+      const open = !hdr.classList.contains('is-menu');
+      hdr.classList.toggle('is-menu', open);
+      document.documentElement.classList.toggle('is-locked', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      // Раскрытый подпункт закрываем вместе с панелью: у .hdr__drop своё visibility:visible, и под скрытой
+      // панелью оставались невидимые ссылки, перехватывавшие нажатия на баннер (замер 19.10, 390 px).
+      if (!open) closeDrops();
+    });
+
+    // Поворот планшета / смена ширины окна через 1000 px в любую сторону: меню и раскрытые подпункты
+    // сбрасываются. Расширение — оставались блокировка прокрутки и подпункты (768 → 1280); сужение —
+    // раскрытый на ПК подпункт оставался под скрытой панелью невидимыми ссылками (iPad 1180 → 820, 19.10).
+    window.matchMedia('(min-width: 1000px)').addEventListener('change', () => {
+      hdr.classList.remove('is-menu');
+      document.documentElement.classList.remove('is-locked');
+      toggle?.setAttribute('aria-expanded', 'false');
+      closeDrops();
+    });
+
+    // Пункт меню ведёт на якорь этой же страницы — панель закрываем, иначе она остаётся поверх.
+    hdr.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) =>
+      a.addEventListener('click', () => {
+        hdr.classList.remove('is-menu');
+        document.documentElement.classList.remove('is-locked');
+        toggle?.setAttribute('aria-expanded', 'false');
+        closeDrops();
+      })
+    );
+
+    // Тень шапки, когда страница прокручена.
+    const onScroll = () => hdr.classList.toggle('is-scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+</script>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  /* Подложка с размытием — отдельным слоем, а НЕ backdrop-filter на самой шапке:
+     backdrop-filter делает шапку опорной рамкой для position:fixed, и панель меню
+     на телефоне (inset: 72px 0 0 0) схлопывалась до 64 px — меню не открывалось
+     (независимая проверка 11.10, Chromium и WebKit). */
+  .hdr::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgb(255 255 255 / 0.92);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  }
+
+  .hdr.is-scrolled {
+    border-bottom-color: var(--color-border-soft);
+    box-shadow: 0 10px 30px -24px rgb(21 23 28 / 0.6);
+  }
+
+  .hdr__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    min-height: 72px;
+  }
+
+  .hdr__logo {
+    flex: none;
+    text-decoration: none;
+  }
+  .hdr__logo:hover { opacity: 1; }
+
+  .hdr__panel {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-left: auto;
+  }
+
+  .hdr__list {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .hdr__item { position: relative; }
+
+  .hdr__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--tap);
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--color-text);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .hdr__link:hover,
+  .hdr__item.is-open > .hdr__link {
+    opacity: 1;
+    background: var(--color-bg-alt);
+  }
+
+  /* Иконки рисует компонент Icon — скоуп шапки до них не доходит, поэтому :global */
+  .hdr__link :global(.hdr__chev) { transition: rotate var(--dur) var(--ease); }
+  .hdr__item.is-open :global(.hdr__chev) { rotate: 180deg; }
+
+  .hdr__drop {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    translate: -50% 6px;
+    width: min(720px, 92vw);
+    padding: 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+    border-radius: 22px;
+    box-shadow: 0 30px 70px -30px rgb(21 23 28 / 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur) var(--ease), translate var(--dur) var(--ease), visibility 0s linear var(--dur);
+  }
+
+  .hdr__drop--services { width: min(420px, 92vw); }
+
+  /* На десктопе с мышью список раскрывается и по наведению; мостик ::after не даёт
+     списку закрыться, пока курсор идёт через зазор между пунктом и панелью. */
+  @media (hover: hover) and (min-width: 1000px) {
+    .hdr__item--drop::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 14px;
+    }
+
+    .hdr__item--drop:hover .hdr__drop {
+      opacity: 1;
+      visibility: visible;
+      translate: -50% 0;
+      transition: opacity var(--dur) var(--ease), translate var(--dur) var(--ease);
+    }
+
+    .hdr__item--drop:hover > .hdr__link { background: var(--color-bg-alt); }
+  }
+
+  .hdr__item.is-open .hdr__drop {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% 0;
+    transition: opacity var(--dur) var(--ease), translate var(--dur) var(--ease);
+  }
+
+  .hdr__drop-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .hdr__drop--services .hdr__drop-list { grid-template-columns: 1fr; }
+
+  .hdr__drop-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 14px;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .hdr__drop-link:hover,
+  .hdr__drop-link[aria-current='page'] {
+    opacity: 1;
+    background: var(--color-bg-alt);
+  }
+
+  .hdr__drop-thumb {
+    flex: none;
+    width: 56px;
+    height: 42px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: var(--color-bg-alt);
+  }
+
+  .hdr__drop-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hdr__drop-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .hdr__drop-name {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .hdr__drop-tag {
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--color-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hdr__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .hdr__phone:hover { opacity: 1; }
+  .hdr__phone:hover .hdr__phone-icon { background: var(--color-brand-hover); }
+
+  .hdr__phone-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: #fff;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .hdr__phone-text { display: flex; flex-direction: column; }
+  .hdr__phone-num { font-weight: 700; font-size: 16px; white-space: nowrap; }
+  .hdr__phone-hours { font-size: 13px; color: var(--color-muted); white-space: nowrap; }
+
+  .hdr__burger {
+    display: none;
+    margin-left: auto;
+    width: var(--tap);
+    height: var(--tap);
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-bg-alt);
+    color: var(--color-text);
+  }
+
+  .hdr__burger :global(.hdr__burger-close) { display: none; }
+
+  /* Телефон прячем раньше меню: при 1100–1240 пунктам меню нужнее место */
+  @media (max-width: 1239px) {
+    .hdr__phone-text { display: none; }
+  }
+
+  @media (max-width: 999px) {
+    .hdr__burger { display: grid; }
+    .hdr.is-menu .hdr__burger :global(.hdr__burger-open) { display: none; }
+    .hdr.is-menu .hdr__burger :global(.hdr__burger-close) { display: block; }
+
+    .hdr__panel {
+      position: fixed;
+      inset: 72px 0 0 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-5);
+      margin: 0;
+      padding: var(--space-4) var(--gutter) var(--space-7);
+      background: var(--color-surface);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+    }
+
+    .hdr.is-menu .hdr__panel {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity var(--dur) var(--ease);
+    }
+
+    .hdr__list {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .hdr__link {
+      width: 100%;
+      justify-content: space-between;
+      min-height: 52px;
+      padding: 0 4px;
+      border-radius: 0;
+      border-bottom: 1px solid var(--color-border-soft);
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .hdr__link:hover,
+    .hdr__item.is-open > .hdr__link { background: none; }
+
+    .hdr__drop,
+    .hdr__drop--services {
+      position: static;
+      width: auto;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      translate: none;
+      display: none;
+    }
+
+    .hdr__item.is-open .hdr__drop {
+      display: block;
+      translate: none;
+      padding-block: 8px;
+    }
+
+    .hdr__drop-list { grid-template-columns: 1fr; }
+
+    .hdr__phone-text { display: flex; }
+    .hdr__phone {
+      padding: 12px 16px;
+      border-radius: 18px;
+      background: var(--color-bg-alt);
+    }
+  }
+
+  :global(html.is-locked) { overflow: hidden; }
+</style>

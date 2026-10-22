@@ -1,0 +1,212 @@
+[
+  {
+    "file": "/assets/dizayn-proekt/hero-2000.webp",
+    "slug": "dizayn-proekt",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-living-room-filled-with-furniture-and-a-kitchen-PE4pFgcYzoQ",
+    "author": "Bailey Alexander",
+    "license": "Unsplash License",
+    "original_size": [
+      5000,
+      3333
+    ],
+    "seen": "светлая гостиная-студия с кухонным островом, барными стульями, диваном и двумя креслами, деревянная балка на потолке, дневной свет"
+  },
+  {
+    "file": "/assets/dizayn-proekt/g1-1600.webp",
+    "slug": "dizayn-proekt",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/black-pen-on-white-printer-paper-o776uI1UtuQ",
+    "author": "Akhmad Muzakir",
+    "license": "Unsplash License",
+    "original_size": [
+      4240,
+      2384
+    ],
+    "seen": "блокнот с карандашными эскизами мебели, распечатанные рабочие чертежи интерьера и образцы отделки (шпон); кадр обрезан справа до 70% ширины — убран титульный штамп с чужим логотипом и именем заказчика; мелкие подписи на чертеже остались, крупных надписей нет"
+  },
+  {
+    "file": "/assets/dizayn-proekt/g2-1600.webp",
+    "slug": "dizayn-proekt",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-person-is-holding-a-folder-over-a-desk-QhFnyhUNUk0",
+    "author": "EAT DOTORI",
+    "license": "Unsplash License",
+    "original_size": [
+      5748,
+      4000
+    ],
+    "seen": "рука перелистывает каталог образцов обоев (пальмы) на деревянном столе, рядом другие альбомы образцов"
+  },
+  {
+    "file": "/assets/dizayn-proekt/g3-1600.webp",
+    "slug": "dizayn-proekt",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/bright-modern-kitchen-and-living-area-with-outdoor-view-8TuQa6evtog",
+    "author": "Irena Oze",
+    "license": "Unsplash License",
+    "original_size": [
+      6664,
+      4443
+    ],
+    "seen": "кухня-гостиная: каменный остров, белые барные стулья, кресло, растение, дверь на балкон, солнечно"
+  },
+  {
+    "file": "/assets/dizayn-proekt/g4-1600.webp",
+    "slug": "dizayn-proekt",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/living-room-L7EwHkq1B2s",
+    "author": "Kara Eads",
+    "license": "Unsplash License",
+    "original_size": [
+      4708,
+      3139
+    ],
+    "seen": "гостиная с рыжим кожаным диваном, серым креслом, растениями и люстрой, за ней белая кухня, светло"
+  },
+  {
+    "file": "/assets/dizayn-proekt/g5-1600.webp",
+    "slug": "dizayn-proekt",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-restaurant-with-yellow-walls-and-wooden-tables-6BO-DVSBtqs",
+    "author": "SOUrav EK",
+    "license": "Unsplash License",
+    "original_size": [
+      8256,
+      5504
+    ],
+    "seen": "небольшое кафе: жёлтая стена, светлые столы и белые стулья, открытые полки у лестницы; мелкие экраны меню без читаемых надписей"
+  },
+  {
+    "file": "/assets/remont/g1-1600.webp",
+    "slug": "remont",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-painting-a-wall-with-yellow-paint-1iho4gvI4-g",
+    "author": "Ali Mkumbwa",
+    "license": "Unsplash License",
+    "original_size": [
+      7360,
+      4912
+    ],
+    "seen": "маляр в красном комбинезоне со спины красит белую стену валиком в жёлтый, лица не видно"
+  },
+  {
+    "file": "/assets/remont/g2-1600.webp",
+    "slug": "remont",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/persons-hand-on-floral-textile-CIihKqBUx-M",
+    "author": "Erik Mclean",
+    "license": "Unsplash License",
+    "original_size": [
+      5472,
+      3648
+    ],
+    "seen": "рука разглаживает на стене обои с крупными розовыми и красными цветами на тёмном фоне, ярко и красочно; надписей нет"
+  },
+  {
+    "file": "/assets/remont/g3-1600.webp",
+    "slug": "remont",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/paint-roller-applying-blue-paint-Cl-OpYWFFm0",
+    "author": "Theme Photos",
+    "license": "Unsplash License",
+    "original_size": [
+      4461,
+      3116
+    ],
+    "seen": "валик на ручке наносит голубую краску на белую стену, очень светлый кадр"
+  },
+  {
+    "file": "/assets/remont/g4-1600.webp",
+    "slug": "remont",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-measuring-a-piece-of-wood-with-a-measuring-tape-ohF5oGzMcUY",
+    "author": "Jimmy Nilsson Masth",
+    "license": "Unsplash License",
+    "original_size": [
+      6000,
+      4000
+    ],
+    "seen": "вид сверху: мастер в рабочих перчатках отмеряет складным метром лист гипсокартона у стопки листов на поддоне, лица не видно, светло; мелкая заводская маркировка на кромке листа частично закрыта перчаткой"
+  },
+  {
+    "file": "/assets/remont/g5-1600.webp",
+    "slug": "remont",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/floor-installation-with-a-drill-and-cord-rALa-LXCy6o",
+    "author": "Nguyễn Hiệp",
+    "license": "Unsplash License",
+    "original_size": [
+      5506,
+      3671
+    ],
+    "seen": "вид сверху: дрель с жёлтым шнуром на плиточном полу рядом со смонтированными деревянными шкафами и светлым полом"
+  },
+  {
+    "file": "/assets/stroitelstvo-domov/hero-2000.webp",
+    "slug": "stroitelstvo-domov",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/house-construction-with-scaffolding-and-brickwork-6lvui3Ak-eA",
+    "author": "Phil Hearing",
+    "license": "Unsplash License",
+    "original_size": [
+      7952,
+      5304
+    ],
+    "seen": "строящийся кирпичный дом в строительных лесах, поддоны кирпича на настиле, деревянные стропила крыши, голубое небо, солнце"
+  },
+  {
+    "file": "/assets/stroitelstvo-domov/g2-1600.webp",
+    "slug": "stroitelstvo-domov",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/brick-house-under-construction-VggmWsUgA10",
+    "author": "Divaris Shirichena",
+    "license": "Unsplash License",
+    "original_size": [
+      5717,
+      4303
+    ],
+    "seen": "двухэтажный кирпичный частный дом на стадии стен и черепичной кровли, приставные лестницы, куча песка, голубое небо"
+  },
+  {
+    "file": "/assets/stroitelstvo-domov/g3-1600.webp",
+    "slug": "stroitelstvo-domov",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-brick-house-with-a-red-door-and-green-grass-OpYauzpDMUU",
+    "author": "Ryland Dean",
+    "license": "Unsplash License",
+    "original_size": [
+      4928,
+      3264
+    ],
+    "seen": "готовый частный дом из красного кирпича с красной дверью, круглыми кустами и газоном, тёплый вечерний свет"
+  },
+  {
+    "file": "/assets/stroitelstvo-domov/g4-1600.webp",
+    "slug": "stroitelstvo-domov",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/brown-brick-building-under-blue-sky-during-daytime-Y4ckjTPdWks",
+    "author": "James Feaver",
+    "license": "Unsplash License",
+    "original_size": [
+      4176,
+      2784
+    ],
+    "seen": "новый двухэтажный дом из красного кирпича (на две семьи) с серой кровлей, голубое небо; кадр обрезан справа до 90% ширины — убрана табличка FOR SALE в окне соседнего дома"
+  }
+]

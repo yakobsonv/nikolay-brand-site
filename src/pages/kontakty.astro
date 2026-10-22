@@ -1,0 +1,71 @@
+---
+// Контакты: телефон, два шоу-рума с картой, реквизиты.
+// Адрес и шоу-румы — обязательно, карта в подвале.
+// Формы нет — приём заявок пока не реализуем.
+import Page from '../layouts/Page.astro';
+import Icon from '../components/brand/Icon.astro';
+import Tile from '../components/brand/Tile.astro';
+import ContactsBand from '../components/brand/ContactsBand.astro';
+import { MATERIALS, SERVICES } from '../data/directions';
+import { breadcrumbJsonLd } from '../lib/seo';
+
+const trail = [{ label: 'Главная', href: '/' }, { label: 'Контакты' }];
+const featured = [MATERIALS[0], MATERIALS[5], SERVICES[0], SERVICES[2]];
+---
+
+<Page
+  title="Контакты и шоу-румы — Кирпичный трест"
+  description="Телефон и адреса двух шоу-румов в Москве: Научный проезд, 10 и ул. Большая Почтовая, 55/59. Пн–пт с 10:00 до 18:00. Образцы кирпича и плитки — вживую."
+  slug="kontakty"
+  jsonLd={[breadcrumbJsonLd(trail, 'brand')]}
+>
+  <nav class="container k-crumbs" aria-label="Хлебные крошки">
+    <a href="/">Главная</a> <span aria-hidden="true">/</span> <span aria-current="page">Контакты</span>
+  </nav>
+
+  <ContactsBand
+    asH1
+    heading="Контакты и шоу-румы"
+    text="Два шоу-рума в Москве. Покажем образцы кирпича и тротуарной плитки, подскажем по материалам и работам, посчитаем количество под ваш объект."
+  />
+
+
+  <section class="sec k-dirs" aria-labelledby="kd-title">
+    <div class="container">
+      <div class="sec__head sec__head--single">
+        <p class="kicker">Направления</p>
+        <h2 class="sec__title" id="kd-title">С чем можем помочь</h2>
+      </div>
+      <ul class="k-dirs__grid" data-reveal-stagger>
+        {featured.map((d) => <li><Tile d={d} sizes="(max-width: 760px) 100vw, 25vw" /></li>)}
+      </ul>
+      <p class="k-dirs__all"><a class="btn btn--ghost" href="/#directions">Все материалы и услуги <Icon name="arrow" size={18} /></a></p>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .k-crumbs {
+    padding-top: var(--space-5);
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+  .k-crumbs a { color: var(--color-text-soft); }
+
+  .k-crumbs + :global(.cb) { padding-top: var(--space-5); }
+
+
+  .k-dirs { padding-top: 0; }
+
+  .k-dirs__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 240px;
+    gap: var(--space-4);
+  }
+
+  .k-dirs__all { margin-top: var(--space-6); text-align: center; }
+
+  @media (max-width: 999px) { .k-dirs__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 479px) { .k-dirs__grid { grid-template-columns: 1fr; grid-auto-rows: 200px; } }
+</style>

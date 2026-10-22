@@ -1,0 +1,226 @@
+[
+  {
+    "file": "/assets/zhbi/hero-2000.webp",
+    "slug": "zhbi",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/construction-workers-inspect-precast-concrete-slabs-outdoors-v4k1Y3Y-Vps",
+    "author": "RONNAKORN TRIRAGANON",
+    "license": "Unsplash License",
+    "original_size": [
+      5472,
+      3648
+    ],
+    "seen": "двое рабочих в касках и жилетах у штабеля ребристых ж/б плит на площадке, деревья, дневной свет"
+  },
+  {
+    "file": "/assets/zhbi/g1-1600.webp",
+    "slug": "zhbi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-bunch-of-cement-containers-stacked-on-top-of-each-other-0L91K-_IJVQ",
+    "author": "Limi change",
+    "license": "Unsplash License",
+    "original_size": [
+      6527,
+      4351
+    ],
+    "seen": "штабель бетонных блоков с металлическими монтажными петлями, светлый дневной кадр"
+  },
+  {
+    "file": "/assets/armatura/hero-2000.webp",
+    "slug": "armatura",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-close-up-of-a-pile-of-orange-metal-bars-GdMHDX56dnI",
+    "author": "boris misevic",
+    "license": "Unsplash License",
+    "original_size": [
+      6192,
+      3480
+    ],
+    "seen": "крупно штабель рыжих рифлёных арматурных прутков, уложенных крест-накрест, яркое солнце"
+  },
+  {
+    "file": "/assets/armatura/g1-1600.webp",
+    "slug": "armatura",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-group-of-men-standing-on-top-of-a-pile-of-metal-6CT4cYdSNaI",
+    "author": "Glenov Brankovic",
+    "license": "Unsplash License",
+    "original_size": [
+      9504,
+      6336
+    ],
+    "seen": "связки длинных арматурных прутков на стройплощадке, рабочие в касках, стрела крана, каркас здания, голубое небо"
+  },
+  {
+    "file": "/assets/armatura/g2-1600.webp",
+    "slug": "armatura",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/worms-eye-view-photography-of-rebar-eyq7H7gO0EY",
+    "author": "Michael  Bader",
+    "license": "Unsplash License",
+    "original_size": [
+      3888,
+      2592
+    ],
+    "seen": "вид снизу на вертикальный арматурный каркас с хомутами у бетонной стены, светлое небо"
+  },
+  {
+    "file": "/assets/armatura/g3-1600.webp",
+    "slug": "armatura",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-in-a-safety-vest-working-on-a-construction-site-7ypbeAK9t4E",
+    "author": "shraga kopstein",
+    "license": "Unsplash License",
+    "original_size": [
+      7620,
+      5080
+    ],
+    "seen": "рабочий в жёлтой каске и сигнальном жилете спиной к камере у вертикальной арматурной сетки и щитовой опалубки"
+  },
+  {
+    "file": "/assets/sukhie-smesi/hero-2000.webp",
+    "slug": "sukhie-smesi",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/black-and-red-shovel-on-white-sand-AXJHLDKXDQE",
+    "author": "Andrey Metelev",
+    "license": "Unsplash License",
+    "original_size": [
+      5443,
+      3629
+    ],
+    "seen": "студийный кадр: садовый совок зачерпывает сыпучую песчаную массу из насыпи, крупинки сыплются, ярко-оранжевый фон; по описанию автора — песок"
+  },
+  {
+    "file": "/assets/sukhie-smesi/g1-1600.webp",
+    "slug": "sukhie-smesi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-person-is-putting-cement-on-a-brick-wall-i6V6diaf71A",
+    "author": "Solømen",
+    "license": "Unsplash License",
+    "original_size": [
+      6000,
+      4000
+    ],
+    "seen": "руки мастера с кельмой кладут бетонные блоки на кладочный раствор, светлое помещение"
+  },
+  {
+    "file": "/assets/sukhie-smesi/g2-1600.webp",
+    "slug": "sukhie-smesi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/hands-applying-plaster-to-a-wall-with-trowels-Re1O5byZ8bY",
+    "author": "Sasun Bughdaryan",
+    "license": "Unsplash License",
+    "original_size": [
+      5616,
+      3744
+    ],
+    "seen": "руки со широким и узким шпателями, на шпателе белая шпаклёвка, светлая стена на фоне"
+  },
+  {
+    "file": "/assets/sukhie-smesi/g3-1600.webp",
+    "slug": "sukhie-smesi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-warehouse-filled-with-stacks-of-white-bags-qHo65Xyzcvo",
+    "author": "Zemos",
+    "license": "Unsplash License",
+    "original_size": [
+      6000,
+      4000
+    ],
+    "seen": "склад с рядами белых мешков на деревянных поддонах в несколько ярусов, свет из окон ангара; надписи на мешках не читаются"
+  },
+  {
+    "file": "/assets/sukhie-smesi/g4-1600.webp",
+    "slug": "sukhie-smesi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/tiling-tools-and-materials-are-staged-on-the-floor-_sCavvK5Gbg",
+    "author": "Raymond Petrik",
+    "license": "Unsplash License",
+    "original_size": [
+      5364,
+      3514
+    ],
+    "seen": "терракотовая плитка во дворе: свежий слой белой смеси, ведро с замешанным раствором, шпатели и лейка у белёной стены, дневной свет"
+  },
+  {
+    "file": "/assets/krovlya/hero-2000.webp",
+    "slug": "krovlya",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/brown-roof-across-blue-sky-oWxYqUeTYhY",
+    "author": "Verstappen Photography",
+    "license": "Unsplash License",
+    "original_size": [
+      5084,
+      3888
+    ],
+    "seen": "ровный скат красной черепичной кровли, за ним кирпичная труба, чистое голубое небо"
+  },
+  {
+    "file": "/assets/krovlya/g1-1600.webp",
+    "slug": "krovlya",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/brown-concrete-house-roof-Dg_vH-Biy9w",
+    "author": "Southeastern Premier Roofing",
+    "license": "Unsplash License",
+    "original_size": [
+      4874,
+      3232
+    ],
+    "seen": "скат оранжевой черепичной крыши с пятью слуховыми окнами в бирюзовых рамах"
+  },
+  {
+    "file": "/assets/krovlya/g2-1600.webp",
+    "slug": "krovlya",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-white-house-with-a-green-roof-and-a-tree--S4l2EsOQhc",
+    "author": "Earl Wilcox",
+    "license": "Unsplash License",
+    "original_size": [
+      6123,
+      4082
+    ],
+    "seen": "белый дом со скатами зелёной фальцевой кровли, дерево и кусты, небо с облаками"
+  },
+  {
+    "file": "/assets/krovlya/g3-1600.webp",
+    "slug": "krovlya",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-working-on-a-roof-with-a-power-drill-Scaj0T40nFI",
+    "author": "Raze Solar",
+    "license": "Unsplash License",
+    "original_size": [
+      4898,
+      3265
+    ],
+    "seen": "кровельщик в салатовой футболке и страховочной обвязке на скате из гибкой (битумной) черепицы, голубое небо; лицо мелко, в профиль"
+  },
+  {
+    "file": "/assets/krovlya/g4-1600.webp",
+    "slug": "krovlya",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/red-metal-and-brown-clay-roofs-IMiiJZZgN1g",
+    "author": "along 33",
+    "license": "Unsplash License",
+    "original_size": [
+      5184,
+      3888
+    ],
+    "seen": "крупно стык двух крыш: красный профилированный лист и коричневая черепица"
+  }
+]

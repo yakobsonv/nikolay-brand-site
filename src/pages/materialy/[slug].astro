@@ -1,0 +1,13 @@
+---
+// Страницы материалов: /materialy/<slug>/ — по одной на направление из src/data/directions.
+import DirectionPage from '../../components/brand/DirectionPage.astro';
+import { MATERIALS } from '../../data/directions';
+
+export function getStaticPaths() {
+  return MATERIALS.map((d) => ({ params: { slug: d.slug }, props: { d } }));
+}
+
+const { d } = Astro.props;
+---
+
+<DirectionPage d={d} />

@@ -1,0 +1,975 @@
+---
+// Страница направления — один шаблон на 10 материалов и 4 услуги.
+// Цен и каталога нет. Секции рисуются, только если в данных есть содержимое.
+import Page from '../../layouts/Page.astro';
+import Img from './Img.astro';
+import Icon from './Icon.astro';
+import Tile from './Tile.astro';
+import ContactsBand from './ContactsBand.astro';
+import { directionPath, getDirection } from '../../data/directions';
+import { breadcrumbJsonLd, faqJsonLd, toLiveHref } from '../../lib/seo';
+import { getSite } from '../../lib/sites';
+import { nowrapHyphens, wbrDomains } from '../../lib/format';
+import type { Direction } from '../../lib/types';
+
+interface Props {
+  d: Direction;
+}
+
+const { d } = Astro.props;
+const site = getSite('brand');
+const isService = d.kind === 'service';
+const path = directionPath(d);
+const slug = path.replace(/^\/|\/$/g, '');
+const groupLabel = isService ? 'Услуги' : 'Материалы';
+
+const trail = [
+  { label: 'Главная', href: '/' },
+  { label: groupLabel, href: '/#directions' },
+  { label: d.name },
+];
+
+const related = d.related.filter((s) => s !== d.slug).map(getDirection).slice(0, 4);
+const faq = d.faq ?? [];
+
+/** Колонки сеток по числу карточек — без одинокой карточки в последнем ряду (проверка 11.10:
+ *  7 карточек в три колонки давали 3+3+1, 6 шагов в автосетке — 5+1). */
+const offerCols = (n: number) => (n <= 3 ? n : n === 4 || n === 7 || n === 8 ? 4 : 3);
+const stepCols = (n: number) => (n <= 5 ? n : n === 6 ? 3 : 4);
+
+/** Подсказка srcset по реальной ширине ячейки галереи (сетка 6 колонок, см. стили .gal__grid--N):
+ *  без неё широкий кадр брал файл 800 px на ширину 1280 — растяжение 1,6 (замер 11.10). */
+function gallerySizes(n: number, i: number): string {
+  const n6 = Math.min(n, 6);
+  let span = 2;
+  if (n6 === 1) span = 6;
+  else if (i === 0 && n6 >= 3) span = 4;
+  else if (n6 === 2) span = 3;
+  else if (n6 === 4 && i === 3) span = 6;
+  else if (n6 === 5 && i >= 3) span = 3;
+  const mobile = i === 0 ? '100vw' : '50vw';
+  return `(max-width: 760px) ${mobile}, ${Math.round((span / 6) * 92)}vw`;
+}
+
+const serviceLd = isService
+  ? {
+      '@type': 'Service',
+      name: d.title,
+      description: d.seo.description,
+      areaServed: 'Москва и Московская область',
+      provider: { '@id': toLiveHref('brand', '/') + '#organization' },
+      url: toLiveHref('brand', path),
+    }
+  : null;
+---
+
+<Page
+  title={d.seo.title}
+  description={d.seo.description}
+  slug={slug}
+  ogImage={d.hero.srcSmall ?? d.hero.src}
+  current={d.slug}
+  jsonLd={[breadcrumbJsonLd(trail, 'brand'), faq.length ? faqJsonLd(faq, 'brand', slug) : null, serviceLd]}
+>
+  <!-- ПЕРВЫЙ ЭКРАН -->
+  <section class="dh">
+    <div class="container">
+      <div class="dh__card">
+        <div class="dh__media">
+          <Img photo={d.hero} eager sizes="(max-width: 760px) 120vw, (max-width: 1320px) 100vw, 1280px" class="dh__img" decorative />
+        </div>
+        <span class="dh__shade" aria-hidden="true"></span>
+
+        <nav class="dh__crumbs" aria-label="Хлебные крошки">
+          <ol>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/#directions">{groupLabel}</a></li>
+            <li><span aria-current="page">{d.name}</span></li>
+          </ol>
+        </nav>
+
+        <div class="dh__body">
+          <p class="dh__kind">{isService ? 'Услуга' : 'Строительные материалы'}</p>
+          <h1 class="dh__title" set:html={nowrapHyphens(d.title)} />
+          <p class="dh__lead">{d.lead}</p>
+          <div class="dh__actions">
+            <a class="btn btn--primary btn--lg" href={site.phone.href}><Icon name="phone" size={18} /> {site.phone.display}</a>
+            <a class="btn btn--glass btn--lg" href="#contacts">Шоу-румы и адреса</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЧТО ПОСТАВЛЯЕМ / ЧТО ВХОДИТ -->
+  <section class="sec offer" aria-labelledby="offer-title">
+    <div class="container">
+      <div class="sec__head" data-reveal>
+        <div>
+          <p class="kicker">{isService ? 'Что входит' : 'Что поставляем'}</p>
+          <h2 class="sec__title" id="offer-title">{d.offer.heading}</h2>
+        </div>
+        {d.offer.intro && <p class="sec__text">{d.offer.intro}</p>}
+      </div>
+      <ul class="offer__grid" style={`--cols:${offerCols(d.offer.items.length)}`} data-reveal-stagger>
+        {d.offer.items.map((it, i) => (
+          <li class="offer__card">
+            <span class="offer__num">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="offer__title">{it.title}</h3>
+            <p class="offer__text">{it.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ГАЛЕРЕЯ -->
+  {d.gallery && d.gallery.length > 0 && (
+    <section class="sec gal" aria-labelledby="gal-title">
+      <div class="container">
+        <h2 class="vh" id="gal-title">Фотографии: {d.name.toLowerCase()}</h2>
+        <ul class:list={['gal__grid', `gal__grid--${Math.min(d.gallery.length, 6)}`]} data-reveal-stagger>
+          {d.gallery.map((g, i) => (
+            <li class="gal__item">
+              <button class="gal__btn" type="button" data-lb-open={g.src} data-lb-alt={g.alt} data-lb-w={g.width} data-lb-h={g.height}>
+                <Img photo={g} sizes={gallerySizes(d.gallery?.length ?? 0, i)} class="gal__img" />
+                <span class="vh">Увеличить фото</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <dialog class="lb" data-lb aria-labelledby="gal-title">
+        <figure class="lb__fig">
+          <div class="lb__stage" data-lb-stage>
+            <img class="lb__img" alt="" data-lb-img />
+          </div>
+          <figcaption class="lb__cap" aria-live="polite">
+            <span data-lb-cap></span>
+            {d.gallery.length > 1 && <span class="lb__count" data-lb-count></span>}
+          </figcaption>
+        </figure>
+        {d.gallery.length > 1 && (
+          <>
+            <button class="lb__nav lb__nav--prev" type="button" data-lb-prev aria-label="Предыдущий кадр"><Icon name="chevron" size={26} class="lb__ico-prev" /></button>
+            <button class="lb__nav lb__nav--next" type="button" data-lb-next aria-label="Следующий кадр"><Icon name="chevron" size={26} class="lb__ico-next" /></button>
+          </>
+        )}
+        <button class="lb__close" type="button" data-lb-close aria-label="Закрыть"><Icon name="close" size={22} /></button>
+      </dialog>
+    </section>
+  )}
+
+  <!-- ПОДРОБНО + ГДЕ ПРИМЕНЯЕТСЯ -->
+  {(d.about || d.uses || d.audience) && (
+    <section class="sec sec--alt more" aria-label="Подробнее">
+      <div class="container more__grid">
+        {d.about && (
+          <div class="more__about" data-reveal>
+            <p class="kicker">Подробнее</p>
+            <h2 class="sec__title">{d.about.heading}</h2>
+            <div class="more__prose" data-clamp>
+              {d.about.paragraphs.map((p) => <p>{p}</p>)}
+            </div>
+            <button class="more__toggle" type="button" data-clamp-btn hidden>Читать дальше</button>
+          </div>
+        )}
+        <aside class="more__side" data-reveal>
+          {d.uses && (
+            <div class="more__box">
+              <h2 class="more__box-title">{d.uses.heading}</h2>
+              <ul class="more__list">
+                {d.uses.items.map((u) => (
+                  <li><span class="more__check"><Icon name="check" size={16} strokeWidth={2.4} /></span>{u}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {d.audience && d.audience.length > 0 && (
+            <div class="more__box more__box--aud">
+              <h2 class="more__box-title">Кому подходит</h2>
+              <ul class="more__chips">
+                {d.audience.map((a) => <li class="chip">{a}</li>)}
+              </ul>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+  )}
+
+  <!-- ЭТАПЫ -->
+  {d.steps && (
+    <section class="sec steps" aria-labelledby="steps-title">
+      <div class="container">
+        <div class="sec__head sec__head--single" data-reveal>
+          <p class="kicker">По шагам</p>
+          <h2 class="sec__title" id="steps-title">{d.steps.heading}</h2>
+        </div>
+        <ol class="steps__list" style={`--cols:${stepCols(d.steps.items.length)}`} data-reveal-stagger>
+          {d.steps.items.map((s, i) => (
+            <li class="steps__item">
+              <span class="steps__num">{i + 1}</span>
+              <h3 class="steps__title">{s.title}</h3>
+              <p class="steps__text">{s.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <!-- ПРОИЗВОДИТЕЛИ -->
+  {d.producers && d.producers.length > 0 && (
+    <section class:list={['sec', 'prods', !d.steps && 'sec--alt']} aria-labelledby="prods-title">
+      <div class="container">
+        <div class="sec__head sec__head--single" data-reveal>
+          <p class="kicker">Производители</p>
+          <h2 class="sec__title" id="prods-title">Чью продукцию поставляем</h2>
+        </div>
+        <ul class="prods__grid" data-reveal-stagger>
+          {d.producers.map((p) => (
+            <li class="prods__card">
+              <div class="prods__logo">
+                {p.logo ? <img src={p.logo} alt={p.name} loading="lazy" decoding="async" /> : <span class="prods__word">{p.name}</span>}
+              </div>
+              {p.logo && <p class="prods__name">{p.name}</p>}
+              {p.note && <p class="prods__note">{p.note}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ВИТРИНЫ С ЦЕНАМИ -->
+  {d.shops && d.shops.length > 0 && (
+    <section class="sec sec--tight shops" aria-labelledby="shops-title">
+      <div class="container">
+        <div class="shops__card" data-reveal>
+          <div>
+            <p class="kicker">Цены и наличие</p>
+            <h2 class="shops__title" id="shops-title">Смотрите на наших сайтах</h2>
+          </div>
+          <ul class="shops__list">
+            {d.shops.map((s) => (
+              <li>
+                <a class="shops__link" href={s.href} target="_blank" rel="noopener">
+                  <span>
+                    <span class="shops__label">{s.label}</span>
+                    {s.note && <span class="shops__note" set:html={wbrDomains(s.note)} />}
+                  </span>
+                  <Icon name="arrow-up-right" size={22} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ВОПРОСЫ -->
+  {faq.length > 0 && (
+    <section class="sec faq" aria-labelledby="faq-title">
+      <div class="container faq__grid">
+        <div data-reveal>
+          <p class="kicker">Вопросы</p>
+          <h2 class="sec__title" id="faq-title">Частые вопросы</h2>
+        </div>
+        <div class="faq__list" data-reveal-stagger>
+          {faq.map((f, i) => (
+            <details class="faq__item" open={i === 0}>
+              <summary class="faq__q">{f.q}<span class="faq__plus" aria-hidden="true"></span></summary>
+              <p class="faq__a">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <ContactsBand />
+
+  <!-- СОСЕДНИЕ НАПРАВЛЕНИЯ -->
+  {related.length > 0 && (
+    <section class="sec rel" aria-labelledby="rel-title">
+      <div class="container">
+        <div class="sec__head sec__head--single" data-reveal>
+          <p class="kicker">Ещё направления</p>
+          <h2 class="sec__title" id="rel-title">Пригодится вместе с этим</h2>
+        </div>
+        <ul class="rel__grid" data-reveal-stagger>
+          {related.map((r) => (
+            <li><Tile d={r} size="md" sizes="(max-width: 760px) 100vw, 25vw" /></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+</Page>
+
+<script>
+  // «Читать дальше» — только на телефоне и только со скриптом; без JS текст виден целиком.
+  // На телефоне до первой фотографии было 4,7–6,6 тыс. px текста.
+  const prose = document.querySelector<HTMLElement>('[data-clamp]');
+  const more = document.querySelector<HTMLButtonElement>('[data-clamp-btn]');
+  if (prose && more && window.matchMedia('(max-width: 760px)').matches && prose.scrollHeight > 420) {
+    prose.classList.add('is-clamped');
+    more.hidden = false;
+    more.addEventListener('click', () => {
+      prose.classList.remove('is-clamped');
+      more.hidden = true;
+    });
+  }
+
+  // Лайтбокс галереи: листание кнопками, стрелками ←/→ и свайпом; подпись — alt кадра и счётчик «3 / 8».
+  // Esc, клик по фону и × закрывают; при открытии фокус на ×, при закрытии — на кадре, который смотрели последним;
+  // страница под окном не прокручивается.
+  const dlg = document.querySelector<HTMLDialogElement>('[data-lb]');
+  const img = dlg?.querySelector<HTMLImageElement>('[data-lb-img]');
+  const thumbs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-lb-open]'));
+  if (dlg && img && thumbs.length) {
+    const cap = dlg.querySelector<HTMLElement>('[data-lb-cap]');
+    const count = dlg.querySelector<HTMLElement>('[data-lb-count]');
+    const stage = dlg.querySelector<HTMLElement>('[data-lb-stage]');
+    const fig = dlg.querySelector<HTMLElement>('.lb__fig');
+    const root = document.documentElement;
+    const n = thumbs.length;
+    let cur = 0;
+
+    const show = (k: number) => {
+      cur = (k + n) % n;
+      const { lbOpen = '', lbAlt = '', lbW, lbH } = thumbs[cur].dataset;
+      if (lbW && lbH) {
+        img.width = Number(lbW);
+        img.height = Number(lbH);
+      }
+      img.src = lbOpen;
+      img.alt = lbAlt;
+      if (cap) cap.textContent = lbAlt;
+      if (count) count.textContent = `${cur + 1} / ${n}`;
+      // соседние кадры — заранее, чтобы листание не ждало загрузки
+      if (n > 1) [cur + 1, cur - 1].forEach((j) => { new Image().src = thumbs[(j + n) % n].dataset.lbOpen || ''; });
+    };
+
+    thumbs.forEach((b, k) =>
+      b.addEventListener('click', () => {
+        show(k);
+        // прокрутка страницы под окном заблокирована; ширину полосы прокрутки возмещаем, чтобы вёрстка не сдвигалась
+        const sbw = window.innerWidth - root.clientWidth;
+        root.style.overflow = 'hidden';
+        if (sbw > 0) root.style.paddingRight = `${sbw}px`;
+        dlg.showModal();
+        // фокус — на «Закрыть»: на первой кнопке («Предыдущий кадр») Enter/пробел сразу листали назад
+        dlg.querySelector<HTMLButtonElement>('[data-lb-close]')?.focus();
+      })
+    );
+
+    dlg.addEventListener('close', () => {
+      root.style.overflow = '';
+      root.style.paddingRight = '';
+      thumbs[cur].focus();
+    });
+
+    dlg.querySelector('[data-lb-close]')?.addEventListener('click', () => dlg.close());
+    dlg.querySelector('[data-lb-prev]')?.addEventListener('click', () => show(cur - 1));
+    dlg.querySelector('[data-lb-next]')?.addEventListener('click', () => show(cur + 1));
+    // клик мимо кадра, подписи и кнопок — по фону
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg || e.target === stage || e.target === fig) dlg.close();
+    });
+    dlg.addEventListener('keydown', (e) => {
+      if (n < 2) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1); }
+    });
+
+    // свайп, как в баннере главной; вертикальное движение не считается
+    let x0 = 0;
+    let y0 = 0;
+    dlg.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    dlg.addEventListener('touchend', (e) => {
+      if (n < 2) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      const dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(dx < 0 ? cur + 1 : cur - 1);
+    }, { passive: true });
+  }
+</script>
+
+<style>
+  /* ========== ПЕРВЫЙ ЭКРАН ========== */
+  .dh { padding-top: clamp(12px, 2vw, 24px); }
+
+  .dh__card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: clamp(440px, 60vh, 580px);
+    border-radius: 32px;
+    background: var(--color-dark);
+    color: #fff;
+  }
+
+  .dh__media { position: absolute; inset: 0; z-index: -2; }
+
+  .dh :global(.dh__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dh :global(.dh__img) { animation: dh-zoom 2400ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  }
+
+  @keyframes dh-zoom {
+    from { scale: 1.1; }
+    to { scale: 1; }
+  }
+
+  .dh__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgb(12 13 16 / 0.86) 0%, rgb(12 13 16 / 0.62) 42%, rgb(12 13 16 / 0.08) 78%),
+      linear-gradient(180deg, rgb(12 13 16 / 0.45) 0%, rgb(12 13 16 / 0) 22%);
+  }
+
+  /* Планшет и узкий ноутбук: текст занимает почти всю ширину карточки, а затемнение справа сходило на нет —
+     белый текст на светлых кадрах 1,9–3,9:1 (замер 19.10, 768 и 1024). Здесь затемнение не ниже 0,6 по всей ширине. */
+  @media (min-width: 761px) and (max-width: 1199px) {
+    .dh__shade {
+      background:
+        linear-gradient(90deg, rgb(12 13 16 / 0.86) 0%, rgb(12 13 16 / 0.7) 50%, rgb(12 13 16 / 0.6) 100%),
+        linear-gradient(180deg, rgb(12 13 16 / 0.3) 0%, rgb(12 13 16 / 0) 22%);
+    }
+  }
+
+  .dh__crumbs { padding: 22px clamp(22px, 5vw, 64px) 0; }
+
+  .dh__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+  }
+
+  .dh__crumbs li { display: inline-flex; align-items: center; gap: 6px; color: rgb(255 255 255 / 0.95); }
+  .dh__crumbs li + li::before { content: '/'; color: rgb(255 255 255 / 0.6); }
+  .dh__crumbs a { color: rgb(255 255 255 / 0.95); text-decoration: none; }
+  .dh__crumbs a:hover { opacity: 1; text-decoration: underline; }
+
+  .dh__body {
+    max-width: 720px;
+    padding: var(--space-6) clamp(22px, 5vw, 64px) clamp(28px, 5vw, 56px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .dh__body > * { animation: dh-in 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .dh__body > :nth-child(2) { animation-delay: 90ms; }
+    .dh__body > :nth-child(3) { animation-delay: 180ms; }
+    .dh__body > :nth-child(4) { animation-delay: 270ms; }
+  }
+
+  @keyframes dh-in {
+    from { opacity: 0; translate: 0 24px; filter: blur(6px); }
+    to { opacity: 1; translate: none; filter: none; }
+  }
+
+  .dh__kind {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--color-brand);
+    /* цвет явно: на телефоне карточка светлая и текст в ней тёмный — плашка наследовала
+       тёмный на красном, 3,35:1 (замер 11.10) */
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .dh__title {
+    margin-top: var(--space-4);
+    font-size: var(--fs-h1);
+    color: #fff;
+  }
+
+  .dh__lead {
+    max-width: 54ch;
+    margin-top: var(--space-4);
+    font-size: var(--fs-lead);
+    color: rgb(255 255 255 / 0.93);
+  }
+
+  .dh__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  .dh__actions .btn { white-space: nowrap; }
+
+  /* Телефон: фото сверху (4:3), текст ниже на светлом фоне. Раньше текст лежал на затемнённом
+     фото во весь кадр — средняя яркость первого экрана 58–77 из 255, «мрачно» (проверка 11.10). */
+  @media (max-width: 760px) {
+    .dh__card {
+      min-height: 0;
+      border-radius: 24px;
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+    .dh__media { position: relative; inset: auto; z-index: 0; aspect-ratio: 4 / 3; overflow: hidden; }
+    .dh__shade { display: none; }
+    .dh__crumbs { padding: 16px 20px 0; }
+    .dh__crumbs li { color: var(--color-text-soft); }
+    .dh__crumbs li + li::before { color: var(--color-muted); }
+    .dh__crumbs a { color: var(--color-text-soft); }
+    .dh__body { padding: var(--space-4) 20px 24px; }
+    .dh__title { font-size: clamp(28px, 8vw, 40px); color: var(--color-text); }
+    .dh__lead { color: var(--color-text-soft); }
+    .dh__actions .btn { width: 100%; }
+    .dh__actions .btn--glass {
+      background: transparent;
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* ========== ЧТО ПОСТАВЛЯЕМ ========== */
+  .offer__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .offer__card {
+    position: relative;
+    padding: 26px 26px 28px;
+    border-radius: 24px;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border-soft);
+    transition: translate 300ms var(--ease), box-shadow 300ms var(--ease), border-color 300ms var(--ease);
+  }
+
+  .offer__card:hover {
+    translate: 0 -3px;
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-border);
+  }
+
+  .offer__num {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    height: 32px;
+    padding-inline: 10px;
+    border-radius: 999px;
+    background: var(--color-brand-soft);
+    color: var(--color-brand-strong);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .offer__title {
+    margin-top: var(--space-4);
+    font-size: var(--fs-h4);
+    line-height: 1.2;
+  }
+
+  .offer__text { margin-top: var(--space-2); color: var(--color-text-soft); }
+
+  @media (max-width: 999px) { .offer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 599px) { .offer__grid { grid-template-columns: 1fr; } }
+
+  /* ========== ПОДРОБНО ========== */
+  .more__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .more__prose { margin-top: var(--space-5); max-width: 64ch; }
+  .more__prose p + p { margin-top: var(--space-4); }
+  .more__prose p { color: var(--color-text-soft); font-size: 18px; line-height: 1.55; }
+
+  .more__side {
+    display: grid;
+    gap: var(--space-4);
+    position: sticky;
+    top: 96px;
+  }
+
+  .more__box {
+    padding: 26px;
+    border-radius: 24px;
+    background: var(--color-surface);
+  }
+
+  .more__box-title {
+    font-size: var(--fs-h4);
+    margin-bottom: var(--space-4);
+  }
+
+  .more__list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-block: 9px;
+    border-top: 1px solid var(--color-border-soft);
+  }
+
+  .more__list li:first-child { border-top: 0; padding-top: 0; }
+
+  .more__check {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    color: #fff;
+  }
+
+  .more__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .more__chips .chip { background: var(--color-bg-alt); }
+
+  @media (max-width: 899px) {
+    .more__grid { grid-template-columns: 1fr; }
+    .more__side { position: static; }
+  }
+
+  /* ========== ЭТАПЫ ========== */
+  .steps__list {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+    gap: var(--space-4);
+    counter-reset: step;
+  }
+
+  .steps__item {
+    position: relative;
+    padding: 24px;
+    border-radius: 24px;
+    background: var(--color-bg-alt);
+  }
+
+  .steps__num {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--color-sun);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 19px;
+  }
+
+  .steps__title { margin-top: var(--space-4); font-size: var(--fs-h4); line-height: 1.2; }
+  .steps__text { margin-top: var(--space-2); color: var(--color-text-soft); font-size: var(--fs-small); }
+
+  @media (max-width: 999px) { .steps__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 479px) { .steps__list { grid-template-columns: 1fr; } }
+
+  .more__toggle {
+    margin-top: var(--space-4);
+    padding: 10px 20px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    background: transparent;
+    font-weight: 600;
+  }
+
+  @media (max-width: 760px) {
+    .more__prose.is-clamped {
+      max-height: 300px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+      mask-image: linear-gradient(180deg, #000 60%, transparent);
+    }
+  }
+
+  /* ========== ПРОИЗВОДИТЕЛИ ========== */
+  .prods__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .prods__card {
+    padding: 24px;
+    border-radius: 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-soft);
+  }
+
+  .prods__logo { display: grid; place-items: center start; height: 64px; }
+  .prods__logo img { max-height: 58px; max-width: 160px; width: auto; object-fit: contain; }
+  .prods__word { font-family: var(--font-head); font-weight: 800; font-size: 24px; line-height: 1.05; }
+  .prods__name { margin-top: var(--space-3); font-weight: 700; }
+  .prods__note { margin-top: var(--space-2); color: var(--color-text-soft); font-size: var(--fs-small); }
+
+  /* ========== ГАЛЕРЕЯ ========== */
+  .gal__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-rows: clamp(160px, 18vw, 260px);
+    gap: var(--space-3);
+  }
+
+  .gal__item { grid-column: span 2; min-width: 0; }
+  /* ритм: первый кадр крупный, остальные мельче */
+  .gal__grid--4 .gal__item:first-child,
+  .gal__grid--5 .gal__item:first-child,
+  .gal__grid--6 .gal__item:first-child { grid-column: span 4; grid-row: span 2; }
+  .gal__grid--1 .gal__item { grid-column: span 6; grid-row: span 2; }
+  .gal__grid--2 { grid-auto-rows: clamp(220px, 26vw, 360px); }
+  .gal__grid--2 .gal__item { grid-column: span 3; }
+  .gal__grid--3 .gal__item:first-child { grid-column: span 4; grid-row: span 2; }
+  .gal__grid--4 .gal__item:nth-child(4) { grid-column: span 6; }
+  .gal__grid--5 .gal__item:nth-child(n + 4) { grid-column: span 3; }
+
+  .gal__btn {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 22px;
+    background: var(--color-bg-alt);
+    cursor: zoom-in;
+  }
+
+  .gal :global(.gal__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale 800ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .gal__btn:hover :global(.gal__img) { scale: 1.05; }
+
+  @media (max-width: 760px) {
+    .gal__grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 150px; }
+    .gal__item,
+    .gal__grid--2 .gal__item,
+    .gal__grid--4 .gal__item:nth-child(4),
+    .gal__grid--5 .gal__item:nth-child(n + 4) { grid-column: span 1; }
+    .gal__grid .gal__item:first-child { grid-column: span 2; grid-row: span 2; }
+  }
+
+  /* Лайтбокс — на весь экран: кадр по центру, под ним подпись и счётчик, кнопки листания по краям */
+  .lb {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .lb::backdrop { background: rgb(12 13 16 / 0.9); }
+
+  /* Кадр и подпись — одной группой по центру экрана; высота кадра — экран минус поля и подпись (до 2–3 строк) */
+  .lb__fig {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 100%;
+    margin: 0;
+    padding: 64px 84px 18px;
+  }
+
+  .lb__stage {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  .lb__img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 160px);
+    max-height: calc(100dvh - 160px);
+    width: auto;
+    height: auto;
+    border-radius: 14px;
+  }
+
+  .lb__cap {
+    max-width: 70ch;
+    color: #fff;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .lb__count {
+    display: inline-block;
+    margin-left: 10px;
+    color: rgb(255 255 255 / 0.85);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .lb__close,
+  .lb__nav {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .lb__close { top: 10px; right: 10px; width: 44px; height: 44px; }
+  .lb__nav { top: 50%; translate: 0 -50%; }
+  .lb__nav--prev { left: 18px; }
+  .lb__nav--next { right: 18px; }
+  .lb__nav:hover { background: var(--color-brand); color: #fff; }
+  .lb :global(.lb__ico-prev) { rotate: 90deg; }
+  .lb :global(.lb__ico-next) { rotate: -90deg; }
+
+  /* Телефон: кадр во всю ширину, кнопки листания — внизу по краям, подпись над ними */
+  @media (max-width: 760px) {
+    .lb__fig { padding: 60px 10px 76px; }
+    .lb__img { max-height: calc(100vh - 230px); max-height: calc(100dvh - 230px); }
+    .lb__nav { top: auto; bottom: 14px; translate: none; }
+    .lb__nav--prev { left: 12px; }
+    .lb__nav--next { right: 12px; }
+  }
+
+  /* ========== ВИТРИНЫ ========== */
+  .shops__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: var(--space-5) clamp(24px, 5vw, 64px);
+    align-items: center;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: 28px;
+    background: var(--color-sun);
+  }
+
+  .shops__card .kicker { color: var(--color-text); }
+  .shops__title { font-size: clamp(24px, 2.6vw, 36px); }
+
+  .shops__list { display: grid; gap: 10px; }
+
+  .shops__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 16px 20px;
+    border-radius: 18px;
+    background: #fff;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: translate 250ms var(--ease), box-shadow 250ms var(--ease);
+  }
+
+  .shops__link:hover { opacity: 1; translate: 0 -2px; box-shadow: var(--shadow-card); }
+  .shops__link > span { min-width: 0; }
+  .shops__link :global(svg) { flex: none; }
+  .shops__label { display: block; font-weight: 700; }
+  /* В подписи — адрес сайта: точки переноса ставит wbrDomains(); anywhere — запасной вариант, чтобы длинный адрес
+     не распирал страницу (на 320 было 331 px) */
+  .shops__note { display: block; font-size: var(--fs-small); color: var(--color-text-soft); overflow-wrap: anywhere; }
+
+  @media (max-width: 760px) { .shops__card { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ========== ВОПРОСЫ ========== */
+  .faq__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    gap: var(--space-5) clamp(24px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .faq__item { border-bottom: 1px solid var(--color-border); }
+  .faq__item:first-child { border-top: 1px solid var(--color-border); }
+
+  .faq__q {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 20px 0;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__q::-webkit-details-marker { display: none; }
+
+  .faq__plus {
+    position: relative;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-bg-alt);
+    transition: background-color var(--dur) var(--ease), rotate var(--dur) var(--ease);
+  }
+
+  .faq__plus::before,
+  .faq__plus::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    translate: -50% -50%;
+  }
+
+  .faq__plus::after { rotate: 90deg; }
+  .faq__item[open] .faq__plus { rotate: 45deg; background: var(--color-brand); color: #fff; }
+
+  .faq__a { padding-bottom: 20px; color: var(--color-text-soft); max-width: 70ch; }
+
+  @media (max-width: 899px) { .faq__grid { grid-template-columns: 1fr; } }
+
+  /* ========== СОСЕДНИЕ ========== */
+  .rel { padding-top: 0; }
+
+  .rel__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 260px;
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 999px) { .rel__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 479px) { .rel__grid { grid-template-columns: 1fr; grid-auto-rows: 200px; } }
+</style>

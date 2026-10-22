@@ -1,0 +1,195 @@
+/* Токены оформления сайта-визитки.
+   Общая база + тема «brand». Тема задаётся атрибутом data-site на <html>.
+   Правило: компоненты используют только семантические токены (--color-brand, --fs-h2),
+   а не сырые hex. */
+
+:root {
+  /* ==== СЕТКА ==== */
+  --container: 1170px;          /* тема brand переопределяет на 1280 */
+  --container-narrow: 820px;    /* для длинных текстов */
+  --gutter: 16px;               /* поля на телефоне */
+  --gutter-md: 24px;
+  --gutter-lg: 35px;            /* на боевых блоки стоят на left:33–38 */
+  --grid-gap: 20px;             /* шаг каталожной сетки (352 + 20 = 372) */
+
+  /* ==== ОТСТУПЫ ==== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Вертикальный ритм секций (на боевых его нет — высоты жёсткие в px) */
+  --section-pad-sm: clamp(20px, 3vw, 32px);
+  --section-pad-md: clamp(32px, 5vw, 64px);
+  --section-pad-lg: clamp(48px, 7vw, 96px);
+
+  /* ==== ЦВЕТ: нейтральная база ==== */
+  --color-text: #1d1d1d;        /* доминанта видимого текста на всех сайтах */
+  --color-text-soft: #454545;
+  --color-muted: #7a7a7a;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f6f6f6;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f9f9f9;
+  --color-border: #d7d7d7;
+  --color-border-soft: #e6e6e6;
+  --color-border-strong: #1e1e1e; /* контур ghost-кнопки, так на боевых */
+  --color-dark: #1b1b1b;
+  --color-on-dark: #ffffff;
+  --color-success: #1abd00;
+  --color-error: #c0392b;
+
+  /* Бренд — перекрывается темой. База = нейтральный тёмный, чтобы без темы ничего не «светилось». */
+  --color-brand: #1d1d1d;
+  --color-brand-strong: #000000;
+  --color-brand-soft: #f2f2f2;    /* светлая подложка бренд-акцента */
+  --color-accent-text: #1d1d1d;   /* акцент в тексте */
+  --color-on-brand: #ffffff;      /* текст на бренд-заливке */
+  --color-brand-fill: var(--color-brand); /* заливка primary-кнопки (у Стелларда — градиент) */
+  --color-link: var(--color-accent-text);
+
+  /* ==== ТИПОГРАФИКА ==== */
+  /* TODO: шрифты пока системные. Самохост woff2 (Montserrat/Roboto/Inter) — шаг импорта ассетов,
+     лицензия на шрифт Rounds не подтверждена. */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-head: var(--font-body);
+  --fw-head: 700;               /* вес заголовков; Оскол поднимает до 800 */
+  --lh-body: 1.4;               /* 140% — единый на трёх сайтах */
+  --lh-head: 1.15;              /* чуть плотнее 120% — крупные заголовки дышат лучше */
+  --tracking: 0;
+
+  /* Тайпскейл через clamp: снимает ручную подрезку заголовков (60/56/54/47px у Оскола) */
+  --fs-h1: clamp(30px, 5.2vw, 48px);
+  --fs-h2: clamp(23px, 3.2vw, 34px);
+  --fs-h3: clamp(19px, 2.1vw, 24px);
+  --fs-h4: clamp(17px, 1.8vw, 20px);
+  --fs-body: 17px;
+  --fs-lead: clamp(18px, 2vw, 21px);
+  --fs-small: 15px;
+  --fs-tiny: 13px;
+  --fs-price: clamp(30px, 4vw, 44px);     /* на боевых 50px десктоп / 30px мобайл */
+  --fs-currency: clamp(20px, 2.4vw, 28px); /* «₽» — отдельный кегль */
+
+  /* ==== РАДИУСЫ / ТЕНИ ==== */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 11px 2px rgba(0, 0, 0, 0.12);
+  --shadow-lift: 0 8px 24px 2px rgba(0, 0, 0, 0.18);
+
+  /* ==== КНОПКИ ==== */
+  --btn-radius: var(--radius);
+  --btn-pad-y: 14px;
+  --btn-pad-x: 26px;
+  --btn-fs: 16px;
+  --btn-weight: 700;
+  --btn-transform: none;        /* капса в CSS нет: на боевых он набран в тексте */
+
+  /* ==== ФОРМЫ ==== */
+  --field-h: 48px;              /* на боевых 40px; 48 — минимум для пальца */
+  --field-radius: 6px;
+  --field-border: #c7c7c7;
+  --field-bg: #ffffff;
+  --field-fs: 16px;             /* <16px iOS зумит страницу при фокусе */
+  --field-pad-x: 14px;
+
+  /* ==== ПРОЧЕЕ ==== */
+  --tap: 44px;                  /* минимальная кликабельная зона */
+  --dur: 200ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --focus-ring: 3px;
+  --overlay: rgba(0, 0, 0, 0.55);
+  --hero-overlay: 0.35;         /* затемнение фото первого экрана */
+  --z-header: 100;
+  --z-modal: 1000;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: var(--gutter-md);
+    --fs-body: 18px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --gutter: var(--gutter-lg);
+  }
+}
+
+/* ============================================================
+   ТЕМА: ВИЗИТКА КОМПАНИИ (brand)
+   Задача темы: ярко и жизнерадостно, без серого и мрачного, без чёрного фона
+   первого экрана и терракотовых кнопок.
+   Поэтому: белый лист и тёплая светлая подложка, почти чёрный текст, один
+   насыщенный красный акцент (не терракота) и жёлтый — для живых акцентов
+   на тёмных плашках. Контраст посчитан, не на глаз (09.10):
+     #d0202c на белом 5,35:1, на #f5f2ed 4,79:1; белый на #d0202c 5,35:1;
+     #5f636c на белом 6,02:1, на #f5f2ed 5,39:1;
+     #ff9aa0 на #15171c 8,86:1; #ffd166 на #15171c 12,44:1.
+   ============================================================ */
+:root[data-site="brand"] {
+  --container: 1280px;
+  --container-narrow: 860px;
+
+  --color-brand: #d0202c;
+  --color-brand-strong: #a8151f;
+  --color-brand-hover: #a8151f;
+  --color-brand-soft: #fdecec;
+  --color-brand-fill: #d0202c;
+  --color-accent-text: #d0202c;
+  --color-on-brand: #ffffff;
+  --color-brand-on-dark: #ff9aa0;
+  --color-sun: #ffd166;
+
+  --color-bg: #ffffff;
+  --color-bg-alt: #f5f2ed;
+  --color-surface: #ffffff;
+  --color-surface-alt: #faf8f5;
+  --color-dark: #15171c;
+  --color-text: #15171c;
+  --color-text-soft: #4a4d55;
+  --color-muted: #5f636c;
+  --color-border: #e4e0d9;
+  --color-border-soft: #eeebe6;
+  --color-border-strong: #15171c;
+  --color-on-dark: #ffffff;
+  --color-on-dark-soft: #c8ccd4;
+
+  --font-head: "Manrope", "Onest", system-ui, Arial, sans-serif;
+  --font-body: "Onest", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --fw-head: 800;
+  --lh-head: 1.08;
+  --tracking-head: -0.02em;
+
+  --fs-h1: clamp(34px, 5.4vw, 72px);
+  --fs-h2: clamp(28px, 3.6vw, 52px);
+  --fs-h3: clamp(20px, 1.9vw, 26px);
+  --fs-h4: clamp(17px, 1.4vw, 20px);
+  --fs-body: 17px;
+  --fs-lead: clamp(17px, 1.45vw, 20px);
+  --fs-small: 15px;
+  --fs-tiny: 13px;
+  --fs-stat: clamp(20px, 1.6vw, 22px);
+
+  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-lg: 28px;
+  --btn-radius: 999px;
+  --btn-weight: 600;
+  --shadow-card: 0 18px 40px -24px rgba(21, 23, 28, 0.45);
+  --shadow-lift: 0 28px 60px -26px rgba(21, 23, 28, 0.55);
+
+  --hero-glow: rgb(208 32 44 / 0.22);
+  --hero-glow-soft: rgb(208 32 44 / 0.08);
+}
+
+:root[data-site="brand"] h1,
+:root[data-site="brand"] h2,
+:root[data-site="brand"] h3 { letter-spacing: var(--tracking-head); }

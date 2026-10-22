@@ -1,0 +1,269 @@
+---
+// Контакты: телефон, два шоу-рума, карта. Яркая красная полоса вместо тёмной.
+// Формы заявки нет: приём заявок пока не реализуем.
+// Шоу-румы и часы — из реестра (src/lib/sites.ts), источник — контакты действующего сайта ЖКЗ.
+import Icon from './Icon.astro';
+import { SHOWROOMS, getSite } from '../../lib/sites';
+import { nowrapHyphens } from '../../lib/format';
+
+interface Props {
+  heading?: string;
+  text?: string;
+  /** карта под полосой */
+  map?: boolean;
+  id?: string;
+  /** заголовок первого уровня (на странице контактов) */
+  asH1?: boolean;
+}
+
+const {
+  heading = 'Приезжайте в шоу-рум или позвоните',
+  text = 'Покажем образцы, подскажем, что подойдёт под ваш объект, и посчитаем количество.',
+  map = true,
+  id = 'contacts',
+  asH1 = false,
+} = Astro.props;
+
+const site = getSite('brand');
+const routeHref = (lat: number, lng: number) => `https://yandex.ru/maps/?ll=${lng},${lat}&z=16&pt=${lng},${lat},pm2rdm`;
+const pts = SHOWROOMS.map((r, i) => `${r.geo.lng},${r.geo.lat},pm2rdl${i + 1}`).join('~');
+// Карта — статичные картинки (Static API Яндекса без ключа, склеены из кадров 650×450, лежат в public/assets/map/,
+// пересборка — scripts/static-map.py, происхождение — photos-manifest/map.json): у бесплатного виджета map-widget
+// внутри реклама, отключить её нельзя.
+// Метки 1 и 2 — как номера шоу-румов в списке выше. Клик — Яндекс Карты с теми же метками.
+const mapHref = `https://yandex.ru/maps/?ll=37.6250,55.7176&z=11&pt=${pts}`;
+const mapAlt = `Карта Москвы: ${SHOWROOMS.map((r, i) => `${i + 1} — ${r.street}`).join('; ')}`;
+const Heading = asH1 ? 'h1' : 'h2';
+---
+
+<section class="cb" id={id}>
+  <div class="container">
+    <div class="cb__card">
+      <span class="cb__glow" aria-hidden="true"></span>
+      <div class="cb__lead" data-reveal>
+        <Heading class="cb__title" set:html={nowrapHyphens(heading)} />
+        <p class="cb__text">{text}</p>
+        <a class="cb__phone" href={site.phone.href}>
+          <span class="cb__phone-ico"><Icon name="phone" size={22} /></span>
+          {site.phone.display}
+        </a>
+        <p class="cb__hours"><Icon name="clock" size={18} /> {site.hours}</p>
+      </div>
+
+      <ul class="cb__rooms" data-reveal-stagger>
+        {SHOWROOMS.map((r, i) => (
+          <li class="cb__room">
+            <span class="cb__room-num" aria-hidden="true">{i + 1}</span>
+            <p class="cb__room-title">{r.title}</p>
+            <p class="cb__room-addr">{r.locality}, {r.street}</p>
+            <p class="cb__room-hours">{r.hours}</p>
+            <a class="cb__room-route" href={routeHref(r.geo.lat, r.geo.lng)} target="_blank" rel="noopener">
+              Открыть на карте <Icon name="arrow-up-right" size={16} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {map && (
+      <a class="cb__map" href={mapHref} target="_blank" rel="noopener noreferrer" data-reveal>
+        <picture>
+          <source media="(min-width: 900px)" srcset="/assets/map/showrooms-1280.webp 1x, /assets/map/showrooms-2560.webp 2x" width="1280" height="500" />
+          <source media="(min-width: 600px)" srcset="/assets/map/showrooms-1680x800.webp" width="1680" height="800" />
+          <img src="/assets/map/showrooms-800.webp" width="800" height="800" alt={mapAlt} loading="lazy" decoding="async" />
+        </picture>
+        <span class="cb__map-open">Открыть в Яндекс Картах <Icon name="arrow-up-right" size={16} /></span>
+      </a>
+    )}
+  </div>
+</section>
+
+<style>
+  .cb { padding-block: var(--section-pad-lg); }
+
+  .cb__card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+    padding: clamp(28px, 5vw, 64px);
+    border-radius: 32px;
+    background: linear-gradient(125deg, #e0262f 0%, #c81d28 45%, #b0141f 100%);
+    color: #fff;
+  }
+
+  /* «Переливы» — мягкое пятно света, медленно гуляет по полосе */
+  .cb__glow {
+    position: absolute;
+    z-index: -1;
+    width: 70%;
+    aspect-ratio: 1;
+    right: -18%;
+    top: -50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(255 209 102 / 0.45), rgb(255 209 102 / 0) 65%);
+    animation: cb-drift 14s ease-in-out infinite alternate;
+  }
+
+  @keyframes cb-drift {
+    from { translate: 0 0; }
+    to { translate: -30% 40%; }
+  }
+
+  .cb__title {
+    font-size: var(--fs-h2);
+    color: #fff;
+  }
+
+  .cb__text {
+    max-width: 44ch;
+    margin-top: var(--space-4);
+    font-size: var(--fs-lead);
+    color: #fff;
+  }
+
+  .cb__phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: var(--space-6);
+    color: #fff;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(26px, 3.2vw, 44px);
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .cb__phone:hover { opacity: 1; }
+  .cb__phone:hover .cb__phone-ico { scale: 1.08; }
+
+  .cb__phone-ico {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-brand);
+    transition: scale 250ms var(--ease);
+  }
+
+  .cb__hours {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--space-3);
+    color: rgb(255 255 255 / 0.95);
+  }
+
+  .cb__rooms {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cb__room {
+    position: relative;
+    padding: 22px 24px 22px 76px;
+    border-radius: 22px;
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  .cb__room-num {
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--color-sun);
+    color: var(--color-text);
+    font-family: var(--font-head);
+    font-weight: 800;
+  }
+
+  .cb__room-title { font-weight: 700; font-size: 18px; }
+  .cb__room-addr { margin-top: 4px; }
+  .cb__room-hours { margin-top: 2px; color: var(--color-muted); font-size: var(--fs-small); }
+
+  .cb__room-route {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    color: var(--color-accent-text);
+    font-weight: 600;
+    font-size: var(--fs-small);
+    text-decoration: none;
+  }
+
+  .cb__room-route:hover { opacity: 1; text-decoration: underline; }
+
+  /* Высота — из пропорции картинки (width/height у <source> и <img>), без min-height:
+     aspect-ratio + min-height превращает минимальную высоту в минимальную ширину (на 390 было 443 px). */
+  .cb__map {
+    position: relative;
+    display: block;
+    margin-top: var(--space-5);
+    overflow: hidden;
+    border-radius: 28px;
+    background: var(--color-bg-alt);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .cb__map img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .cb__map-open {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.14);
+    color: var(--color-accent-text);
+    font-weight: 600;
+    font-size: var(--fs-small);
+  }
+
+  .cb__map:hover { opacity: 1; }
+  .cb__map:hover .cb__map-open { text-decoration: underline; }
+
+  @media (max-width: 899px) {
+    .cb__card { grid-template-columns: 1fr; }
+    /* в одну колонку блик уходил под текст (белый на красном с жёлтым бликом — 3,6:1 на 768, замер 19.10);
+       здесь он внизу, под белыми карточками шоу-румов */
+    .cb__glow { top: auto; bottom: -50%; }
+  }
+
+  @media (max-width: 479px) {
+    .cb__card { border-radius: 24px; padding: 24px 18px; }
+    .cb__map { border-radius: 24px; }
+    .cb__map-open { left: 12px; top: 12px; padding: 8px 14px; }
+    .cb__room { padding: 18px 18px 18px 64px; }
+    .cb__room-num { left: 16px; top: 18px; }
+    .cb__phone { gap: 10px; font-size: 25px; }
+    .cb__phone-ico { width: 44px; height: 44px; }
+  }
+
+  @media (max-width: 359px) {
+    .cb__phone { font-size: 22px; }
+  }
+</style>

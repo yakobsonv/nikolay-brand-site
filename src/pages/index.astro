@@ -1,0 +1,820 @@
+---
+// Главная визитки — порядок блоков:
+// 1) небольшой баннер о деятельности компании;
+// 2) плитки материалов и услуг со ссылками на отдельные страницы;
+// 3) производители, с которыми работает компания;
+// 4) для кого компания — целевая аудитория.
+// Плюс бегущая строка и контакты с шоу-румами и картой.
+import Page from '../layouts/Page.astro';
+import Img from '../components/brand/Img.astro';
+import Icon from '../components/brand/Icon.astro';
+import Tile from '../components/brand/Tile.astro';
+import ContactsBand from '../components/brand/ContactsBand.astro';
+import { MATERIALS, SERVICES, directionPath, getDirection } from '../data/directions';
+import * as homeRaw from '../data/home';
+import { getSite } from '../lib/sites';
+import { deepTypo, nowrapHyphens } from '../lib/format';
+
+// Экранная типографика (неразрывные пробелы и дефисы) — для всех текстов главной
+const { banner, marquee, tilesIntro, producers, audience, why, contacts, seo } = deepTypo({ ...homeRaw });
+
+const site = getSite('brand');
+
+/** Кадры баннера — по одному на крупное направление; подпись ведёт на страницу.
+ *  Берём первый кадр галереи, а не главное фото направления: иначе один и тот же дом стоял
+ *  подряд в баннере, в плитке 01 и в миниатюре меню (проверка 11.10). */
+const SLIDES = ['kirpich', 'stroitelstvo-domov', 'trotuarnaya-plitka', 'dizayn-proekt', 'krovlya']
+  .map(getDirection)
+  .map((d) => ({ d, photo: d.gallery?.[0] ?? d.hero }));
+
+/** Иконки и цвета подложек для карточек «кому полезно» — пёстро. */
+const TONES = ['#d0202c', '#f2a516', '#2f6fe4', '#1f9d6b', '#7a4ee0', '#e8642c'];
+
+const materialSize = (i: number) => (i === 0 || i === MATERIALS.length - 1 ? 'wide' : 'sm');
+// sizes плиток — по замеру ширины ячейки: 761–999 px сетка в две колонки, широкая плитка во всю ширину (720 px на 768);
+// без среднего диапазона на 768@2 брался файл 1000 px на 720 px — растяжение 1,44 (проверка 19.10).
+---
+
+<Page title={seo.title} description={seo.description} onHome>
+  <!-- 1. БАННЕР -->
+  <section class="bnr" aria-labelledby="bnr-title">
+    <div class="container">
+      <div class="bnr__card" data-bnr>
+        <div class="bnr__slides">
+          {SLIDES.map(({ photo }, i) => (
+            <div class:list={['bnr__slide', i === 0 && 'is-active']} data-bnr-slide>
+              <Img photo={photo} eager={i === 0} sizes="(max-width: 760px) 120vw, (max-width: 1320px) 100vw, 1280px" class="bnr__img" decorative />
+            </div>
+          ))}
+          <div class="bnr__arrows">
+            <button class="bnr__arrow" type="button" data-bnr-prev aria-label="Предыдущий кадр"><Icon name="arrow" size={20} class="bnr__arrow-prev" /></button>
+            <button class="bnr__arrow" type="button" data-bnr-next aria-label="Следующий кадр"><Icon name="arrow" size={20} /></button>
+          </div>
+        </div>
+        <span class="bnr__shade" aria-hidden="true"></span>
+        <span class="bnr__sheen" aria-hidden="true"></span>
+
+        <div class="bnr__body">
+          <p class="bnr__kicker">{banner.kicker}</p>
+          <h1 class="bnr__title" id="bnr-title" set:html={nowrapHyphens(banner.title)} />
+          <p class="bnr__text">{banner.text}</p>
+          <div class="bnr__actions">
+            <a class="btn btn--primary btn--lg" href="#directions">Материалы и услуги</a>
+            <a class="btn btn--glass btn--lg" href={site.phone.href}><Icon name="phone" size={18} /> {site.phone.display}</a>
+          </div>
+        </div>
+
+        <div class="bnr__nav">
+          {SLIDES.map(({ d }, i) => (
+            <a class:list={['bnr__cap', i === 0 && 'is-active']} href={directionPath(d)} aria-label={d.name} data-bnr-cap>
+              <span class="bnr__bar" aria-hidden="true"><span></span></span>
+              <span class="bnr__cap-name">{d.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- бегущая строка -->
+  <div class="mq-wrap" aria-hidden="true">
+    <div class="mq">
+      <div class="mq__track">
+        {[0, 1].map(() => (
+          <ul class="mq__list">
+            {marquee.map((w) => <li>{w}</li>)}
+          </ul>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ПЛИТКИ: слева материалы, справа услуги -->
+  <section class="sec dirs" id="directions" aria-labelledby="dirs-title">
+    <div class="container">
+      <h2 class="vh" id="dirs-title">Материалы и услуги</h2>
+      <div class="dirs__grid">
+        <div class="dirs__col">
+          <div class="dirs__head" data-reveal>
+            <p class="kicker">{MATERIALS.length} направлений</p>
+            <h3 class="dirs__title">{tilesIntro.materials.heading}</h3>
+            <p class="dirs__text">{tilesIntro.materials.text}</p>
+          </div>
+          <ul class="dirs__tiles dirs__tiles--materials" data-reveal-stagger>
+            {MATERIALS.map((d, i) => (
+              <li class:list={['dirs__cell', materialSize(i) === 'wide' && 'dirs__cell--wide']}>
+                <Tile d={d} index={i} size={materialSize(i)} sizes={materialSize(i) === 'wide' ? '(max-width: 760px) 100vw, (max-width: 999px) 95vw, 56vw' : '(max-width: 760px) 50vw, (max-width: 999px) 47vw, 28vw'} />
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="dirs__col dirs__col--services">
+          <div class="dirs__head" data-reveal>
+            <p class="kicker">{SERVICES.length} услуги</p>
+            <h3 class="dirs__title">{tilesIntro.services.heading}</h3>
+            <p class="dirs__text">{tilesIntro.services.text}</p>
+          </div>
+          <ul class="dirs__tiles dirs__tiles--services" data-reveal-stagger>
+            {SERVICES.map((d, i) => (
+              <li class="dirs__cell">
+                <Tile d={d} index={i} size="lg" sizes="(max-width: 760px) 100vw, (max-width: 999px) 47vw, 40vw" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- почему удобно -->
+  <section class="sec sec--tight why" aria-labelledby="why-title">
+    <div class="container">
+      <h2 class="vh" id="why-title">{why.heading}</h2>
+      <ul class="why__list" data-reveal-stagger>
+        {why.items.map((it, i) => (
+          <li class="why__item">
+            <span class="why__ico" style={`--tone:${TONES[(i + 1) % TONES.length]}`}>
+              <Icon name={(['layers', 'pin', 'eye', 'calc'] as const)[i % 4]} size={26} />
+            </span>
+            <p class="why__title">{it.title}</p>
+            <p class="why__text">{it.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. ПРОИЗВОДИТЕЛИ -->
+  <section class="sec sec--alt prod" id="producers" aria-labelledby="prod-title">
+    <div class="container">
+      <div class="sec__head" data-reveal>
+        <div>
+          <p class="kicker">С кем работаем</p>
+          <h2 class="sec__title" id="prod-title">{producers.heading}</h2>
+        </div>
+        <p class="sec__text">{producers.text}</p>
+      </div>
+      <ul class="prod__grid" data-reveal-stagger>
+        {producers.items.map((p) => (
+          <li class="prod__card">
+            <div class:list={['prod__logo', p.logoDark && 'prod__logo--dark']}>
+              {p.logo
+                ? <img src={p.logo} alt={p.name} loading="lazy" decoding="async" />
+                : <span class="prod__word">{p.name}</span>}
+            </div>
+            {p.logo && <p class="prod__name">{p.name}</p>}
+            <p class="prod__meta">
+              <span class="chip">{p.category}</span>
+              {p.place && <span class="prod__place"><Icon name="pin" size={14} /> {p.place}</span>}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. КЛИЕНТЫ / ДЛЯ КОГО -->
+  <section class="sec aud" id="clients" aria-labelledby="aud-title">
+    <div class="container">
+      <div class="sec__head" data-reveal>
+        <div>
+          <p class="kicker">Наши клиенты</p>
+          <h2 class="sec__title" id="aud-title">{audience.heading}</h2>
+        </div>
+        <p class="sec__text">{audience.text}</p>
+      </div>
+      <ul class="aud__grid" data-reveal-stagger>
+        {audience.items.map((a, i) => (
+          <li class="aud__card" style={`--tone:${TONES[i % TONES.length]}`}>
+            <span class="aud__ico"><Icon name={a.icon} size={28} /></span>
+            <p class="aud__title">{a.title}</p>
+            <p class="aud__text">{a.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <ContactsBand heading={contacts.heading} text={contacts.text} />
+</Page>
+
+<script>
+  // Баннер: смена кадра каждые 5 с, подпись внизу показывает и ведёт на текущее направление.
+  // При «уменьшить движение» кадр не меняется. Вкладка в фоне — пауза.
+  const root = document.querySelector<HTMLElement>('[data-bnr]');
+  if (root) {
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-bnr-slide]')];
+    const caps = [...root.querySelectorAll<HTMLElement>('[data-bnr-cap]')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = 0;
+    let timer = 0;
+    const show = (n: number) => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => s.classList.toggle('is-active', k === i));
+      caps.forEach((c, k) => c.classList.toggle('is-active', k === i));
+      root.style.setProperty('--bnr-run', 'none');
+      void root.offsetWidth;
+      root.style.removeProperty('--bnr-run');
+    };
+    const start = () => {
+      if (reduce) return;
+      window.clearInterval(timer);
+      timer = window.setInterval(() => show(i + 1), 4000);
+    };
+    root.querySelector('[data-bnr-prev]')?.addEventListener('click', () => { show(i - 1); start(); });
+    root.querySelector('[data-bnr-next]')?.addEventListener('click', () => { show(i + 1); start(); });
+    // свайп по фото: на телефоне фото — только верх карточки, от 761 px фото лежит под всей карточкой
+    // (там текст баннера закрывает почти весь кадр, поэтому слушаем карточку целиком); вертикальная прокрутка не считается
+    let x0 = 0;
+    let y0 = 0;
+    let track = false;
+    const mobile = window.matchMedia('(max-width: 760px)');
+    root.addEventListener('touchstart', (e) => {
+      track = !mobile.matches || !!(e.target as Element).closest('.bnr__slides');
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+    }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      if (!track) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      const dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { show(dx < 0 ? i + 1 : i - 1); start(); }
+    }, { passive: true });
+    caps.forEach((c, k) =>
+      c.addEventListener('mouseenter', () => {
+        show(k);
+        start();
+      })
+    );
+    document.addEventListener('visibilitychange', () => (document.hidden ? window.clearInterval(timer) : start()));
+    if (reduce) root.classList.add('is-static');
+    start();
+  }
+</script>
+
+<style>
+  /* ========== БАННЕР ========== */
+  .bnr { padding-top: clamp(12px, 2vw, 24px); }
+
+  .bnr__card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* «Небольшой баннер» (ТЗ 09.10): на 1440×900 и 1366×768 ряд плиток виден на первом экране */
+    min-height: clamp(400px, 52vh, 480px);
+    border-radius: 32px;
+    background: var(--color-dark);
+    color: #fff;
+  }
+
+  /* z-index — у кадров, а не у .bnr__slides: иначе .bnr__slides становится слоем −3 вместе со стрелками внутри,
+     и стрелки оказываются под затемнением и текстом баннера (на 768 их перекрывал .bnr__body) */
+  .bnr__slides { position: absolute; inset: 0; }
+
+  .bnr__slide {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    opacity: 0;
+    transition: opacity 1200ms var(--ease);
+  }
+
+  .bnr__slide.is-active { opacity: 1; }
+
+  .bnr :global(.bnr__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    scale: 1.04;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bnr__slide.is-active :global(.bnr__img) { animation: bnr-zoom 7s ease-out both; }
+  }
+
+  @keyframes bnr-zoom {
+    from { scale: 1.12; }
+    to { scale: 1.02; }
+  }
+
+  /* Затемнение слева, под текстом; справа кадр остаётся ярким. Клики и свайп пропускает к кадрам
+     (свайп слушает .bnr__slides; замер 19.10: на 761 px и шире elementFromPoint над кадром → .bnr__shade). */
+  .bnr__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgb(12 13 16 / 0.86) 0%, rgb(12 13 16 / 0.66) 38%, rgb(12 13 16 / 0.1) 72%, rgb(12 13 16 / 0) 100%),
+      linear-gradient(0deg, rgb(12 13 16 / 0.6) 0%, rgb(12 13 16 / 0) 34%);
+  }
+
+  /* Планшет и узкий ноутбук: текст баннера почти во всю ширину — затемнение не ниже 0,6 (замер 19.10: на светлых
+     кадрах 768 заголовок 2,3:1, текст 1,6:1) */
+  @media (min-width: 761px) and (max-width: 1199px) {
+    .bnr__shade {
+      background:
+        linear-gradient(90deg, rgb(12 13 16 / 0.86) 0%, rgb(12 13 16 / 0.7) 50%, rgb(12 13 16 / 0.6) 100%),
+        linear-gradient(0deg, rgb(12 13 16 / 0.5) 0%, rgb(12 13 16 / 0) 34%);
+    }
+  }
+
+  /* «Переливы»: тёплый блик медленно проходит по баннеру */
+  .bnr__sheen {
+    position: absolute;
+    inset: -40% -20%;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 38%, rgb(255 209 102 / 0.16) 48%, rgb(208 32 44 / 0.14) 56%, transparent 66%);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bnr__sheen { animation: bnr-sheen 9s ease-in-out infinite; }
+  }
+
+  @keyframes bnr-sheen {
+    0% { translate: -45% 0; }
+    55%, 100% { translate: 45% 0; }
+  }
+
+  .bnr__body {
+    max-width: 780px;
+    padding: clamp(24px, 4vw, 48px) clamp(22px, 5vw, 64px) var(--space-4);
+  }
+
+  .bnr__arrows {
+    position: absolute;
+    right: clamp(16px, 3vw, 40px);
+    top: clamp(16px, 3vw, 32px);
+    z-index: 2;
+    display: flex;
+    gap: 8px;
+  }
+
+  .bnr__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.9);
+    color: var(--color-text);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  .bnr__arrow:hover { background: var(--color-brand); color: #fff; }
+  .bnr :global(.bnr__arrow-prev) { rotate: 180deg; }
+
+  /* Вход первого экрана — CSS-анимацией загрузки, а НЕ наблюдателем:
+     заголовок — главный элемент отрисовки, прятать его до срабатывания скрипта нельзя. */
+  @media (prefers-reduced-motion: no-preference) {
+    .bnr__body > * { animation: bnr-in 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+    .bnr__body > :nth-child(2) { animation-delay: 90ms; }
+    .bnr__body > :nth-child(3) { animation-delay: 180ms; }
+    .bnr__body > :nth-child(4) { animation-delay: 270ms; }
+  }
+
+  @keyframes bnr-in {
+    from { opacity: 0; translate: 0 26px; filter: blur(6px); }
+    to { opacity: 1; translate: none; filter: none; }
+  }
+
+  .bnr__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px 7px 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.14);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .bnr__kicker::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-sun);
+    box-shadow: 0 0 0 4px rgb(255 209 102 / 0.3);
+  }
+
+  .bnr__title {
+    margin-top: var(--space-4);
+    font-size: clamp(30px, 3.4vw, 50px);
+    color: #fff;
+  }
+
+  .bnr__text {
+    max-width: 60ch;
+    margin-top: var(--space-3);
+    font-size: var(--fs-lead);
+    color: rgb(255 255 255 / 0.92);
+  }
+
+  .bnr__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .bnr__actions .btn { white-space: nowrap; }
+
+  .bnr__nav {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--space-3);
+    padding: var(--space-4) clamp(22px, 5vw, 64px) clamp(20px, 3vw, 32px);
+  }
+
+  .bnr__cap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: rgb(255 255 255 / 0.72);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .bnr__cap:hover,
+  .bnr__cap.is-active { opacity: 1; color: #fff; }
+
+  .bnr__bar {
+    position: relative;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: rgb(255 255 255 / 0.3);
+  }
+
+  .bnr__bar span {
+    position: absolute;
+    inset: 0;
+    scale: 0 1;
+    transform-origin: left;
+    background: var(--color-sun);
+  }
+
+  .bnr__cap.is-active .bnr__bar span { scale: 1 1; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bnr__card:not(.is-static) .bnr__cap.is-active .bnr__bar span { animation: var(--bnr-run, bnr-bar 4s linear both); }
+  }
+
+  @keyframes bnr-bar {
+    from { scale: 0 1; }
+    to { scale: 1 1; }
+  }
+
+  /* Телефон: фото сверху (4:3) со стрелками, полоски кадров под ним, текст ниже на светлом фоне.
+     Раньше текст лежал на затемнённом фото — тёмно и тяжело (проверка 11.10). */
+  @media (max-width: 760px) {
+    .bnr__card {
+      min-height: 0;
+      justify-content: flex-start;
+      border-radius: 24px;
+      background: var(--color-bg-alt);
+      color: var(--color-text);
+    }
+    .bnr__slides { position: relative; inset: auto; z-index: 0; aspect-ratio: 4 / 3; overflow: hidden; order: 0; }
+    .bnr__arrows { top: auto; bottom: 12px; right: 12px; }
+    .bnr__arrow { width: 44px; height: 44px; }
+    .bnr__shade, .bnr__sheen { display: none; }
+    .bnr__nav { order: 1; grid-template-columns: repeat(5, 1fr); padding: 14px 20px 0; }
+    .bnr__bar { background: rgb(21 23 28 / 0.14); }
+    .bnr__bar span { background: var(--color-brand); }
+    .bnr__cap-name { display: none; }
+    .bnr__body { order: 2; padding: var(--space-4) 20px 24px; }
+    .bnr__kicker { background: #fff; color: var(--color-text); backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .bnr__title { font-size: clamp(28px, 8.2vw, 38px); color: var(--color-text); }
+    .bnr__text { color: var(--color-text-soft); }
+    .bnr__actions .btn { width: 100%; }
+    .bnr__actions .btn--glass {
+      background: transparent;
+      color: var(--color-text);
+      border-color: var(--color-border-strong);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* ========== БЕГУЩАЯ СТРОКА ========== */
+  /* Полоса чуть повёрнута — обёртка срезает углы, чтобы страница не уезжала вбок */
+  .mq-wrap {
+    overflow: hidden;
+    padding-block: clamp(20px, 3vw, 32px) 8px;
+  }
+
+  .mq {
+    overflow: hidden;
+    background: var(--color-brand);
+    color: #fff;
+    rotate: -1.2deg;
+    margin-inline: -2%;
+  }
+
+  .mq__track {
+    display: flex;
+    width: max-content;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mq__track { animation: mq-run 48s linear infinite; }
+  }
+
+  @keyframes mq-run {
+    to { translate: -50% 0; }
+  }
+
+  .mq__list {
+    display: flex;
+    flex: none;
+    gap: 0;
+    padding-block: 14px;
+  }
+
+  .mq__list li {
+    display: inline-flex;
+    align-items: center;
+    gap: 28px;
+    padding-right: 28px;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(18px, 2vw, 26px);
+    white-space: nowrap;
+  }
+
+  .mq__list li::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--color-sun);
+    rotate: 45deg;
+  }
+
+  /* ========== ПЛИТКИ ========== */
+  .dirs__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(20px, 2.4vw, 32px);
+    align-items: stretch;
+  }
+
+  .dirs__col {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--space-5);
+    min-width: 0;
+  }
+
+  .dirs__title { font-size: clamp(26px, 2.8vw, 40px); }
+  .dirs__text { max-width: 48ch; margin-top: var(--space-3); color: var(--color-text-soft); }
+
+  .dirs__tiles {
+    display: grid;
+    gap: clamp(12px, 1.4vw, 18px);
+  }
+
+  .dirs__tiles--materials {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(210px, 1fr);
+  }
+
+  .dirs__cell--wide { grid-column: 1 / -1; }
+
+  .dirs__tiles--services { grid-auto-rows: 1fr; }
+
+  .dirs__cell { min-width: 0; }
+
+  @media (max-width: 999px) {
+    .dirs__grid { grid-template-columns: 1fr; }
+    .dirs__tiles--services {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: minmax(260px, auto);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .dirs__tiles--materials { grid-auto-rows: 168px; }
+    .dirs__cell--wide { grid-row: span 1; }
+    .dirs__tiles--services { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+  }
+
+  /* ========== ПОЧЕМУ УДОБНО ========== */
+  .why { padding-top: 0; }
+
+  .why__list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .why__item {
+    padding: 24px;
+    border-radius: 24px;
+    background: var(--color-bg-alt);
+  }
+
+  .why__ico {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--tone) 14%, white);
+    color: var(--tone);
+  }
+
+  .why__title {
+    margin-top: var(--space-4);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 19px;
+    line-height: 1.2;
+  }
+
+  .why__text { margin-top: var(--space-2); font-size: var(--fs-small); color: var(--color-text-soft); }
+
+  @media (max-width: 999px) {
+    .why__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 479px) {
+    .why__list { grid-template-columns: 1fr; }
+  }
+
+  /* ========== ПРОИЗВОДИТЕЛИ ========== */
+  .prod__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .prod__card {
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+    border-radius: 24px;
+    background: var(--color-surface);
+    box-shadow: 0 1px 0 var(--color-border-soft);
+    transition: translate 300ms var(--ease), box-shadow 300ms var(--ease);
+  }
+
+  .prod__card:hover { translate: 0 -3px; box-shadow: var(--shadow-card); }
+
+  .prod__logo {
+    display: grid;
+    place-items: center start;
+    height: 72px;
+  }
+
+  /* Знак ОСМиБТ набран белыми буквами — на белой карточке читался «ОС◆БТ» (проверка 11.10) */
+  .prod__logo--dark {
+    place-items: center;
+    width: fit-content;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: var(--color-dark);
+  }
+
+  .prod__logo img {
+    max-height: 64px;
+    max-width: 170px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .prod__word {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--color-text);
+  }
+
+  .prod__name {
+    margin-top: var(--space-4);
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .prod__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-size: var(--fs-small);
+  }
+
+  .prod__meta .chip { background: var(--color-brand-soft); color: var(--color-brand-strong); }
+
+  .prod__place {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-muted);
+  }
+
+  @media (max-width: 999px) {
+    .prod__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  /* На телефоне карточка ~170 px: логотип не шире карточки, длинные названия переносятся */
+  .prod__card { min-width: 0; }
+  .prod__logo img { max-width: min(170px, 100%); }
+  .prod__name { overflow-wrap: anywhere; hyphens: auto; }
+
+  @media (max-width: 599px) {
+    .prod__card { padding: 16px; border-radius: 20px; }
+    .prod__logo { height: 56px; }
+    .prod__logo img { max-height: 48px; }
+    .prod__word { font-size: 21px; }
+    .prod__name { font-size: 15px; }
+    .prod__meta .chip { font-size: 13px; }
+  }
+
+  @media (max-width: 359px) {
+    .prod__grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== КЛИЕНТЫ ========== */
+  .aud__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+
+  .aud__card {
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: 26px;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border-soft);
+    transition: translate 300ms var(--ease), box-shadow 300ms var(--ease), border-color 300ms var(--ease);
+  }
+
+  .aud__card::after {
+    content: '';
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--tone);
+    opacity: 0.08;
+    transition: scale 500ms var(--ease);
+  }
+
+  .aud__card:hover {
+    translate: 0 -4px;
+    box-shadow: var(--shadow-card);
+    border-color: color-mix(in srgb, var(--tone) 35%, white);
+  }
+
+  .aud__card:hover::after { scale: 1.5; }
+
+  .aud__ico {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: var(--tone);
+    color: #fff;
+  }
+
+  .aud__title {
+    margin-top: var(--space-5);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .aud__text { margin-top: var(--space-2); color: var(--color-text-soft); }
+
+  @media (max-width: 999px) {
+    .aud__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 599px) {
+    .aud__grid { grid-template-columns: 1fr; }
+    .aud__card { padding: 22px; }
+  }
+</style>

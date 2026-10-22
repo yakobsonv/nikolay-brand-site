@@ -1,0 +1,84 @@
+---
+// Куки-баннер: согласие на обработку персональных данных и куки. Ссылка ведёт на Положение этого сайта (src/data/legal.ts).
+// Согласие запоминается в localStorage; без JS баннер просто не показывается (скрыт по умолчанию).
+import { localPath } from '../../lib/sites';
+import type { SiteKey } from '../../lib/types';
+
+interface Props {
+  site: SiteKey;
+  /** явная ссылка на политику; по умолчанию — Положение этого же сайта */
+  policyHref?: string;
+}
+
+const { site, policyHref } = Astro.props;
+const href = policyHref ?? localPath(site, 'regulation');
+---
+
+<div class="cookie-banner" id="cookie-banner" role="region" aria-label="Уведомление о файлах cookie" hidden>
+  <p class="cookie-banner__text">
+    Мы используем файлы cookie, чтобы сайт работал корректно и был удобнее. Продолжая пользоваться сайтом,
+    вы соглашаетесь с <a href={href}>политикой обработки персональных данных</a>.
+  </p>
+  <button type="button" class="cookie-banner__btn" id="cookie-banner-accept">Принимаю</button>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = 'cookie-consent-v1';
+    var el = document.getElementById('cookie-banner');
+    var btn = document.getElementById('cookie-banner-accept');
+    if (!el || !btn) return;
+    var ok = false;
+    try { ok = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (ok) return;
+    el.hidden = false;
+    btn.addEventListener('click', function () {
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      el.hidden = true;
+    });
+  })();
+</script>
+
+<style>
+  /* Светлая плашка в углу, а не тёмная полоса во всю ширину: клиент против «мрачновато»,
+     и на телефоне плашка не должна перекрывать первый экран сильнее нужного.
+     Текст #15171c на белом 18:1, ссылка #d0202c на белом 5,35:1, белый на #d0202c 5,35:1. */
+  .cookie-banner {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 560px;
+    padding: 14px 16px 14px 20px;
+    border-radius: 20px;
+    background: #fff;
+    color: var(--color-text, #15171c);
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 20px 50px -18px rgb(21 23 28 / 0.45), 0 0 0 1px rgb(21 23 28 / 0.06);
+  }
+  .cookie-banner[hidden] { display: none; }
+  .cookie-banner__text { margin: 0; }
+  .cookie-banner__text a { color: var(--color-accent-text, #d0202c); text-decoration: underline; }
+  .cookie-banner__btn {
+    flex: none;
+    padding: 10px 22px;
+    border: 0;
+    border-radius: var(--btn-radius, 999px);
+    background: var(--color-brand, #d0202c);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--dur, 0.2s) var(--ease, ease);
+  }
+  .cookie-banner__btn:hover { background: var(--color-brand-hover, #a8151f); }
+  .cookie-banner__btn:focus-visible { outline: 2px solid var(--color-text, #15171c); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .cookie-banner { left: 10px; right: 10px; bottom: 10px; flex-wrap: wrap; font-size: 13px; padding: 14px 16px; }
+    .cookie-banner__btn { width: 100%; }
+  }
+</style>

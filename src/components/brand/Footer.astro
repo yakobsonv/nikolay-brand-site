@@ -1,0 +1,157 @@
+---
+// Подвал: знак, телефон, шоу-румы, ссылки на все направления, ИНН, правовые документы.
+// В подвале обязательно адрес и шоу-рум; название ООО на виду не ставим — только ИНН.
+// Наименование оператора — в правовых документах.
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import { MATERIALS, SERVICES, directionPath } from '../../data/directions';
+import { SHOWROOMS, getSite } from '../../lib/sites';
+
+const site = getSite('brand');
+const year = new Date().getFullYear();
+const legalLine = (site.legalLine ?? '').replace('{year}', String(year));
+---
+
+<footer class="ftr">
+  <div class="container">
+    <div class="ftr__top">
+      <div class="ftr__brand">
+        <a class="ftr__logo" href="/" aria-label={`${site.brand} — на главную`}><Logo inverse /></a>
+        <p class="ftr__about">Строительные материалы и работы для дома, двора и бизнеса — в Москве и области.</p>
+        <a class="ftr__phone" href={site.phone.href}>{site.phone.display}</a>
+        <p class="ftr__hours"><Icon name="clock" size={16} /> {site.hours}</p>
+        <ul class="ftr__rooms">
+          {SHOWROOMS.map((r) => (
+            <li><Icon name="pin" size={16} /> <span>{r.locality}, {r.street}</span></li>
+          ))}
+        </ul>
+      </div>
+
+      <nav class="ftr__col" aria-label="Материалы">
+        <p class="ftr__title">Материалы</p>
+        <ul class="ftr__links ftr__links--two">
+          {MATERIALS.map((d) => <li><a href={directionPath(d)}>{d.name}</a></li>)}
+        </ul>
+      </nav>
+
+      <nav class="ftr__col" aria-label="Услуги и компания">
+        <p class="ftr__title">Услуги</p>
+        <ul class="ftr__links">
+          {SERVICES.map((d) => <li><a href={directionPath(d)}>{d.name}</a></li>)}
+        </ul>
+        <p class="ftr__title ftr__title--gap">Компания</p>
+        <ul class="ftr__links">
+          <li><a href="/#producers">Производители</a></li>
+          <li><a href="/#clients">Для кого</a></li>
+          <li><a href="/kontakty/">Контакты и шоу-румы</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="ftr__bottom">
+      <p>{legalLine}</p>
+      <ul class="ftr__policy">
+        <li><a href="/regulation/">Положение об обработке персональных данных</a></li>
+        <li><a href="/consent/">Согласие на обработку персональных данных</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    margin-top: auto;
+    padding-block: clamp(48px, 6vw, 80px) var(--space-6);
+    background: var(--color-dark);
+    color: var(--color-on-dark-soft);
+    font-size: var(--fs-small);
+  }
+
+  .ftr a { color: var(--color-on-dark); text-decoration: none; }
+  .ftr a:hover { opacity: 1; color: var(--color-brand-on-dark); }
+
+  .ftr__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 0.8fr);
+    gap: clamp(32px, 5vw, 72px);
+  }
+
+  .ftr__logo { display: inline-block; }
+
+  .ftr__about {
+    max-width: 34ch;
+    margin-top: var(--space-4);
+    color: var(--color-on-dark-soft);
+  }
+
+  .ftr__phone {
+    display: inline-block;
+    margin-top: var(--space-5);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(22px, 2.2vw, 28px);
+    white-space: nowrap;
+  }
+
+  .ftr__hours,
+  .ftr__rooms li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: var(--space-2);
+  }
+
+  .ftr__hours :global(svg),
+  .ftr__rooms :global(svg) { flex: none; margin-top: 3px; color: var(--color-sun); }
+
+  .ftr__rooms { margin-top: var(--space-2); }
+
+  .ftr__title {
+    margin-bottom: var(--space-4);
+    color: var(--color-on-dark);
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  .ftr__title--gap { margin-top: var(--space-6); }
+
+  .ftr__links li + li { margin-top: 10px; }
+
+  .ftr__links--two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-5);
+  }
+  .ftr__links--two li + li { margin-top: 0; }
+  .ftr__links--two li { margin-bottom: 10px; }
+
+  .ftr__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    margin-top: clamp(40px, 5vw, 64px);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    font-size: var(--fs-tiny);
+  }
+
+  .ftr__policy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .ftr__policy a { color: var(--color-on-dark-soft); text-decoration: underline; text-underline-offset: 3px; }
+
+  @media (max-width: 899px) {
+    .ftr__top { grid-template-columns: 1fr 1fr; }
+    .ftr__brand { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 559px) {
+    .ftr__top { grid-template-columns: 1fr; }
+    .ftr__links--two { grid-template-columns: 1fr; }
+  }
+</style>

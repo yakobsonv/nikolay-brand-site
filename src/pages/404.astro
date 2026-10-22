@@ -1,0 +1,63 @@
+---
+// Страница 404. Без неё Vercel отдаёт служебную заглушку на английском.
+// Показываем все направления плитками — отсюда любой раздел в один клик.
+import Page from '../layouts/Page.astro';
+import Tile from '../components/brand/Tile.astro';
+import { DIRECTIONS } from '../data/directions';
+import { getSite } from '../lib/sites';
+
+const site = getSite('brand');
+---
+
+<Page
+  title="Страница не найдена — Кирпичный трест"
+  description="Такой страницы на сайте нет. Выберите направление: строительные материалы или услуги."
+  slug="404"
+>
+  <section class="sec nf">
+    <div class="container">
+      <p class="nf__code" aria-hidden="true">404</p>
+      <h1 class="nf__title">Такой страницы здесь нет</h1>
+      <p class="nf__text">
+        Возможно, в адресе опечатка или страницу переименовали. Выберите направление ниже или позвоните:
+        <a href={site.phone.href}>{site.phone.display}</a>.
+      </p>
+      <div class="nf__actions">
+        <a class="btn btn--primary btn--lg" href="/">На главную</a>
+      </div>
+      <ul class="nf__grid">
+        {DIRECTIONS.map((d) => (
+          <li><Tile d={d} size="sm" showTagline={false} sizes="(max-width: 760px) 50vw, 20vw" /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .nf__code {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(80px, 14vw, 180px);
+    line-height: 0.9;
+    color: var(--color-brand);
+    letter-spacing: -0.04em;
+  }
+
+  .nf__title { margin-top: var(--space-4); font-size: var(--fs-h2); }
+  .nf__text { max-width: 60ch; margin-top: var(--space-4); font-size: var(--fs-lead); color: var(--color-text-soft); }
+  .nf__text a { white-space: nowrap; }
+  .nf__actions { margin-top: var(--space-6); }
+
+  .nf__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-auto-rows: 220px;
+    gap: var(--space-3);
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+
+  @media (max-width: 479px) {
+    .nf__grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 168px; }
+  }
+</style>

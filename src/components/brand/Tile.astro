@@ -1,0 +1,173 @@
+---
+// Плитка направления: фото во всю площадь, затемнение снизу, название и подпись, стрелка.
+// Плитки на главной «справа и слева» — по требованию Николая: «плитками справа и слева
+// информация… о строительных материалах и услугах… с переходом с этих плиточек на
+// отдельные страницы».
+import Img from './Img.astro';
+import Icon from './Icon.astro';
+import { directionPath } from '../../data/directions';
+import type { Direction } from '../../lib/types';
+import { nowrapHyphens } from '../../lib/format';
+
+interface Props {
+  d: Direction;
+  index?: number;
+  size?: 'sm' | 'md' | 'lg' | 'wide';
+  /** подсказка srcset — какая доля экрана у плитки */
+  sizes?: string;
+  showTagline?: boolean;
+  class?: string;
+}
+
+const { d, index, size = 'md', sizes = '(max-width: 760px) 50vw, 30vw', showTagline = true, class: className } = Astro.props;
+const num = typeof index === 'number' ? String(index + 1).padStart(2, '0') : null;
+---
+
+<a class:list={['tile', `tile--${size}`, `tile--${d.kind}`, className]} href={directionPath(d)}>
+  <span class="tile__media">
+    <Img photo={d.hero} sizes={sizes} class="tile__img" decorative />
+  </span>
+  <span class="tile__shade" aria-hidden="true"></span>
+  {num && <span class="tile__num" aria-hidden="true">{num}</span>}
+  <span class="tile__go" aria-hidden="true"><Icon name="arrow-up-right" size={20} strokeWidth={2.2} /></span>
+  <span class="tile__body">
+    <span class="tile__name" set:html={nowrapHyphens(d.name)} />
+    {showTagline && <span class="tile__tag">{d.tagline}</span>}
+  </span>
+</a>
+
+<style>
+  .tile {
+    position: relative;
+    display: block;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 220px;
+    height: 100%;
+    border-radius: var(--radius-lg);
+    background: var(--color-dark);
+    color: #fff;
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 350ms var(--ease), translate 350ms var(--ease);
+  }
+
+  .tile:hover {
+    opacity: 1;
+    translate: 0 -4px;
+    box-shadow: var(--shadow-lift);
+  }
+
+  .tile:focus-visible { outline-offset: 4px; }
+
+  .tile__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .tile :global(.tile__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .tile:hover :global(.tile__img) { scale: 1.07; }
+
+  /* Затемнение только снизу, под текстом: верх кадра остаётся ярким.
+     Белый текст на нижних 40 % замерен по контрасту ≥ 4,5:1 на самых светлых кадрах. */
+  .tile__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(180deg, rgb(12 13 16 / 0) 18%, rgb(12 13 16 / 0.62) 52%, rgb(12 13 16 / 0.92) 100%),
+      linear-gradient(180deg, rgb(12 13 16 / 0.28) 0%, rgb(12 13 16 / 0) 26%);
+  }
+
+  .tile__num {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: rgb(255 255 255 / 0.92);
+  }
+
+  .tile__go {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-text);
+    transition: background-color 300ms var(--ease), color 300ms var(--ease), rotate 300ms var(--ease);
+  }
+
+  .tile:hover .tile__go {
+    background: var(--color-brand);
+    color: #fff;
+    rotate: 45deg;
+  }
+
+  .tile__body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px 20px;
+  }
+
+  .tile__name {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(19px, 1.6vw, 24px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .tile__tag {
+    max-width: 44ch;
+    font-size: 15px;
+    line-height: 1.35;
+    color: rgb(255 255 255 / 0.9);
+  }
+
+  .tile--lg .tile__name,
+  .tile--wide .tile__name { font-size: clamp(22px, 2.2vw, 32px); }
+
+  .tile--service .tile__num {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--color-brand);
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 760px) {
+    .tile { min-height: 168px; border-radius: 20px; }
+    .tile__body { padding: 14px 14px 16px; }
+    .tile__name { font-size: 17px; }
+    .tile--wide .tile__name,
+    .tile--lg .tile__name { font-size: 22px; }
+    .tile__go { width: 34px; height: 34px; top: 10px; right: 10px; }
+    .tile__num { top: 12px; left: 14px; font-size: 12px; }
+    .tile--sm .tile__tag { display: none; }
+  }
+
+  /* 320–359: «Железобетонные», «благоустройства» не влезали в плитку на 24 px */
+  @media (max-width: 359px) {
+    .tile__name { font-size: 15px; hyphens: auto; overflow-wrap: anywhere; }
+  }
+</style>

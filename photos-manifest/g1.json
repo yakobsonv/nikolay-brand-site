@@ -1,0 +1,261 @@
+[
+  {
+    "file": "/assets/kirpich/hero-2000.webp",
+    "slug": "kirpich",
+    "role": "hero",
+    "source": "client",
+    "origin": "https://disk.yandex.ru/d/4Xj3pQEsJbrcrQ — /Фото объектов/Дома ЖКЗ/Частное домостроение/Разные Частные дома, Белгород 2014, ЖКЗ/IMG_8710.jpg",
+    "license": "материалы клиента",
+    "original_size": [
+      5184,
+      3456
+    ],
+    "seen": "двухэтажный дом из красного кирпича с белыми карнизами, кирпичные столбы и кованые ворота, ясное синее небо, солнце"
+  },
+  {
+    "file": "/assets/kirpich/g1-1600.webp",
+    "slug": "kirpich",
+    "role": "gallery",
+    "source": "client",
+    "origin": "~/kirpichtrest-code/public/assets/zhkz/object-solomennyi-belgorod.jpg (материалы клиента, Яндекс.Диск А; кадр отобран и обработан для копии сайтов в kirpichtrest-code)",
+    "license": "материалы клиента",
+    "original_size": [
+      1600,
+      1067
+    ],
+    "seen": "дом из соломенного кирпича с тёмно-коричневыми вставками и арочным окном, кирпичные столбы забора, синее небо"
+  },
+  {
+    "file": "/assets/kirpich/g2-1600.webp",
+    "slug": "kirpich",
+    "role": "gallery",
+    "source": "client",
+    "origin": "~/kirpichtrest-code/public/assets/zhkz/object-korichnevyi-nsk.jpg (материалы клиента, Яндекс.Диск А; кадр отобран и обработан для копии сайтов в kirpichtrest-code)",
+    "license": "материалы клиента",
+    "original_size": [
+      1600,
+      1067
+    ],
+    "seen": "двухэтажный дом: коричневая кирпичная кладка и светлый фасад с балконом, сосны, синее небо"
+  },
+  {
+    "file": "/assets/kirpich/g3-1600.webp",
+    "slug": "kirpich",
+    "role": "gallery",
+    "source": "client",
+    "origin": "~/kirpichtrest-code/public/assets/oskol/objects/krasnyy-01.jpg (материалы клиента, Яндекс.Диск А; кадр отобран и обработан для копии сайтов в kirpichtrest-code)",
+    "license": "материалы клиента",
+    "original_size": [
+      1600,
+      1200
+    ],
+    "seen": "дом из красного кирпича со светлыми обрамлениями окон и кирпичным забором с коваными секциями, солнечно"
+  },
+  {
+    "file": "/assets/kirpich/g4-1600.webp",
+    "slug": "kirpich",
+    "role": "gallery",
+    "source": "client",
+    "origin": "~/kirpichtrest-code/public/assets/oskol/gallery-11.jpg (материалы клиента, Яндекс.Диск А; кадр отобран и обработан для копии сайтов в kirpichtrest-code)",
+    "license": "материалы клиента",
+    "original_size": [
+      1600,
+      1067
+    ],
+    "seen": "загородный дом из светлого кирпича с колоннами и полукруглым балконом, мощёный двор, фонари, сосны, солнечно; у крыльца сложены мешки"
+  },
+  {
+    "file": "/assets/kirpich/g5-1600.webp",
+    "slug": "kirpich",
+    "role": "gallery",
+    "source": "client",
+    "origin": "~/kirpichtrest-code/public/assets/zhkz/object-05.jpg (материалы клиента, Яндекс.Диск А, «Фото объектов/Дома ЖКЗ/Частное домостроение»; кадр отобран и обработан для копии сайтов в kirpichtrest-code)",
+    "license": "материалы клиента",
+    "original_size": [
+      1600,
+      1200
+    ],
+    "seen": "двухэтажный дом из светло-оранжевого кирпича с белым арочным обрамлением окна и полукруглым балконом, ясное синее небо, внизу коричневый забор из профлиста; людей и надписей нет"
+  },
+  {
+    "file": "/assets/trotuarnaya-plitka/hero-2000.webp",
+    "slug": "trotuarnaya-plitka",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-brick-walkway-in-a-park-M0hkvLieKeU",
+    "author": "Austin Burleson",
+    "license": "Unsplash License",
+    "original_size": [
+      6240,
+      4160
+    ],
+    "seen": "широкая аллея из красной брусчатки ёлочкой с серыми вкраплениями между газонами, вдали дом и деревья, синее небо с облаками, солнце"
+  },
+  {
+    "file": "/assets/trotuarnaya-plitka/g1-1600.webp",
+    "slug": "trotuarnaya-plitka",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-curved-paved-pathway-surrounded-by-green-bushes-and-plants-i_fpJG0GU5A",
+    "author": "Sergej *****",
+    "license": "Unsplash License",
+    "original_size": [
+      4327,
+      2885
+    ],
+    "seen": "изогнутая дорожка из серо-бежевой плитки, уложенной дугами, бортовой камень, кусты, солнце"
+  },
+  {
+    "file": "/assets/trotuarnaya-plitka/g2-1600.webp",
+    "slug": "trotuarnaya-plitka",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/curved-paved-path-with-trees-a-bench-and-a-wall--zF9c9WTcIw",
+    "author": "Wenying Yuan",
+    "license": "Unsplash License",
+    "original_size": [
+      5876,
+      3813
+    ],
+    "seen": "парковая дорожка из плитки с полосой другого цвета по краям, скамейка, деревья, тёплый вечерний свет"
+  },
+  {
+    "file": "/assets/trotuarnaya-plitka/g3-1600.webp",
+    "slug": "trotuarnaya-plitka",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/circular-paved-patio-with-low-stone-wall-and-green-bushes-NvApISBMvXY",
+    "author": "Sergej *****",
+    "license": "Unsplash License",
+    "original_size": [
+      5184,
+      3888
+    ],
+    "seen": "круглая площадка из тёмной брусчатки в обрамлении гранитных столбиков, зелень и цветы, дневной свет"
+  },
+  {
+    "file": "/assets/trotuarnaya-plitka/g4-1600.webp",
+    "slug": "trotuarnaya-plitka",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/paving-stones-in-red-and-yellow-yR5kkbeqVag",
+    "author": "Szcze hoo",
+    "license": "Unsplash License",
+    "original_size": [
+      3484,
+      1569
+    ],
+    "seen": "мощение сверху: прямоугольные камни разного размера в красных, розоватых и жёлтых тонах, ровный дневной свет; людей, надписей и логотипов нет"
+  },
+  {
+    "file": "/assets/ukladka-plitki/hero-2000.webp",
+    "slug": "ukladka-plitki",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-in-a-green-shirt-and-some-bricks-pDz-sTDOdp0",
+    "author": "FRAEM GmbH",
+    "license": "Unsplash License",
+    "original_size": [
+      3984,
+      2656
+    ],
+    "seen": "руки мастера в зелёной рабочей одежде укладывают серую плитку на песчаное основание; лица нет, дневной свет"
+  },
+  {
+    "file": "/assets/ukladka-plitki/g1-1600.webp",
+    "slug": "ukladka-plitki",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-pile-of-cement-blocks-sitting-on-top-of-a-sidewalk-8WU8XGleveo",
+    "author": "sq lim",
+    "license": "Unsplash License",
+    "original_size": [
+      3805,
+      2537
+    ],
+    "seen": "стопки серой плитки на песчаном основании посреди частично уложенного покрытия"
+  },
+  {
+    "file": "/assets/ukladka-plitki/g2-1600.webp",
+    "slug": "ukladka-plitki",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/a-man-kneeling-down-next-to-a-pile-of-blocks-5A8OxWpqLTo",
+    "author": "sq lim",
+    "license": "Unsplash License",
+    "original_size": [
+      5611,
+      3741
+    ],
+    "seen": "рабочий в шляпе спиной к камере укладывает плитку и жёлтую тактильную плитку на углу тротуара, конусы, машины на дороге"
+  },
+  {
+    "file": "/assets/ukladka-plitki/g3-1600.webp",
+    "slug": "ukladka-plitki",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/modern-house-with-a-paved-driveway-and-garage-rMLc_cIu_IU",
+    "author": "RETRATO INMOBILIARIO",
+    "license": "Unsplash License",
+    "original_size": [
+      7952,
+      5304
+    ],
+    "seen": "подъездная дорожка из серой брусчатки к одноэтажному дому с двумя гаражами, газон, небо с облаками; мелкий номер дома на фасаде"
+  },
+  {
+    "file": "/assets/ukladka-plitki/g4-1600.webp",
+    "slug": "ukladka-plitki",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/stone-path-and-garden-patio-tSHGvi1rk54",
+    "author": "Jason Gooljar",
+    "license": "Unsplash License",
+    "original_size": [
+      6000,
+      4000
+    ],
+    "seen": "круглая площадка из брусчатки со скамьями и дорожка из каменных плит в пышном саду, мягкий вечерний свет; вдали крошечная фигура человека"
+  },
+  {
+    "file": "/assets/cvetnye-smesi/hero-2000.webp",
+    "slug": "cvetnye-smesi",
+    "role": "hero",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/brown-and-white-brick-wall-GwB_sxsG8jc",
+    "author": "Jarrod Erbe",
+    "license": "Unsplash License",
+    "original_size": [
+      5989,
+      3993
+    ],
+    "seen": "стена из красного кирпича разных оттенков со светлым швом, ровный дневной свет, кадр горизонтальный; людей и надписей нет"
+  },
+  {
+    "file": "/assets/cvetnye-smesi/g1-1600.webp",
+    "slug": "cvetnye-smesi",
+    "role": "gallery",
+    "source": "client",
+    "origin": "https://disk.yandex.ru/d/4Xj3pQEsJbrcrQ — /Текстуры (кладки)/ООО_ОСМиБТ/Гладкий/серый беж/sero-bejevyj-chernyj.jpg",
+    "license": "материалы клиента",
+    "original_size": [
+      4134,
+      3975
+    ],
+    "seen": "ровная кладка из светлого серо-бежевого кирпича ОСМиБТ с чёрным швом, кадр почти квадратный"
+  },
+  {
+    "file": "/assets/cvetnye-smesi/g3-1600.webp",
+    "slug": "cvetnye-smesi",
+    "role": "gallery",
+    "source": "unsplash",
+    "origin": "https://unsplash.com/photos/red-bricks-wall-XEsx2NVpqWY",
+    "author": "Quilia",
+    "license": "Unsplash License",
+    "original_size": [
+      4696,
+      3115
+    ],
+    "seen": "стена из красного кирпича с тёмным, почти чёрным швом, солнечный свет"
+  }
+]
